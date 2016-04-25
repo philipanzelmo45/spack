@@ -10,12 +10,16 @@ class Simulationio(Package):
     version('master',
             git='https://github.com/eschnett/SimulationIO.git', branch='master')
 
-    depends_on("curl")
-    depends_on("swig")
+    variant('julia', default=True)
 
-    depends_on("hdf5")
-    depends_on("mpi")
-    depends_on("python")
+    depends_on('curl')
+    depends_on('swig')
+
+    depends_on('hdf5')
+    depends_on('mpi')
+
+    depends_on('julia', when='+julia')
+    depends_on('python')
 
     def install(self, spec, prefix):
         # Build
