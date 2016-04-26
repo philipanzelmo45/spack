@@ -52,11 +52,16 @@ class Openmpi(Package):
 
 
     def install(self, spec, prefix):
-        config_args = ["--prefix=%s" % prefix,
-                       "--with-hwloc=%s" % spec['hwloc'].prefix,
-                       "--enable-openib-connectx-xrc=no",
-                       "--enable-shared",
-                       "--enable-static"]
+        config_args = [
+            "--prefix=%s" % prefix,
+            "--with-hwloc=%s" % spec['hwloc'].prefix,
+            "--enable-openib-connectx-xrc=no",
+            "CPPFLAGS=-I/opt/ofed/include %s" % os.environ.get('CPPFLAGS', ''),
+            "CFLAGS=-I/opt/ofed/include %s" % os.environ.get('CFLAGS', ''),
+            "CXXFLAGS=-I/opt/ofed/include %s" % os.environ.get('CXXFLAGS', ''),
+            "LDFLAGS=-L/opt/ofed/lib64 -L/opt/ofed/lib %s" % os.environ.get('LDFLAGS', ''),
+            "--enable-shared",
+            "--enable-static"]
 
         # Variants
         if '+tm' in spec:
