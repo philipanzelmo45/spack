@@ -55,14 +55,11 @@ class Openmpi(Package):
         config_args = [
             "--prefix=%s" % prefix,
             "--with-hwloc=%s" % spec['hwloc'].prefix,
-            "--enable-openib-connectx-xrc=no",
-            # "CPPFLAGS=-I/opt/ofed/include %s" % os.environ.get('CPPFLAGS', ''),
-            # "CFLAGS=-I/opt/ofed/include %s" % os.environ.get('CFLAGS', ''),
-            # "CXXFLAGS=-I/opt/ofed/include %s" % os.environ.get('CXXFLAGS', ''),
-            # "LDFLAGS=-L/opt/ofed/lib64 -L/opt/ofed/lib %s" % os.environ.get('LDFLAGS', ''),
             "--with-verbs=/opt/ofed",
+            "--enable-openib-connectx-xrc=no",
             "--enable-shared",
             "--enable-static"]
+        # TODO: Use "which ofed_info" to find verbs path
 
         # Variants
         if '+tm' in spec:
