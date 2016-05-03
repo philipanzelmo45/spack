@@ -2,12 +2,14 @@ from spack import *
 import os
 
 class Openmpi(Package):
-    """Open MPI is a project combining technologies and resources from
-       several other projects (FT-MPI, LA-MPI, LAM/MPI, and PACX-MPI)
-       in order to build the best MPI library available. A completely
-       new MPI-2 compliant implementation, Open MPI offers advantages
-       for system and software vendors, application developers and
-       computer science researchers.
+    """The Open MPI Project is an open source Message Passing Interface
+       implementation that is developed and maintained by a consortium
+       of academic, research, and industry partners. Open MPI is
+       therefore able to combine the expertise, technologies, and
+       resources from all across the High Performance Computing
+       community in order to build the best MPI library available.
+       Open MPI offers advantages for system and software vendors,
+       application developers and computer science researchers.
     """
 
     homepage = "http://www.open-mpi.org"
@@ -47,9 +49,13 @@ class Openmpi(Package):
 
 
     def install(self, spec, prefix):
-        config_args = ["--prefix=%s" % prefix,
-                       "--enable-shared",
-                       "--enable-static"]
+        config_args = [
+            "--prefix=%s" % prefix,
+            "--with-verbs=/opt/ofed",
+            "--enable-openib-connectx-xrc=no",
+            "--enable-shared",
+            "--enable-static"]
+        # TODO: Use "which ofed_info" to find verbs path
 
         # Variants
         if '+tm' in spec:
