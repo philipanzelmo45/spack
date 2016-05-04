@@ -54,7 +54,7 @@ class Cactusext(Package):
     openmpi_opts = []
     try:
         ibv_devinfo = which('ibv_devinfo')
-        ibv_devinfo()
+        ibv_devinfo(output=str)
         openmpi_opts.append("+verbs")
     except:
         pass
