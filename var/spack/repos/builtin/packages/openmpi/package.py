@@ -51,7 +51,7 @@ class Openmpi(Package):
     def install(self, spec, prefix):
         config_args = [
             "--prefix=%s" % prefix,
-            "--with-verbs=/opt/ofed",
+            # "--with-verbs=/opt/ofed",
             "--enable-openib-connectx-xrc=no",
             "--enable-shared",
             "--enable-static"]
