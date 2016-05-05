@@ -40,7 +40,8 @@ class Funhpc(Package):
              'SIMFACTORY_QTHREADS_LDFLAGS=-L%s' % spec['qthreads'].prefix.lib,
              'SIMFACTORY_QTHREADS_LIBS=-lqthread',
              'lib',
-             'selftest', 'selftest-funhpc',
+             # The selftests don't build on Comet (memory ulimit too tight?)
+             # 'selftest', 'selftest-funhpc',
              'benchmark', 'benchmark2', 'fibonacci', 'hello', 'pingpong')
 
         # Install
@@ -50,7 +51,7 @@ class Funhpc(Package):
         os.mkdir(join_path(prefix, 'bin'))
         os.mkdir(join_path(prefix, 'include'))
         os.mkdir(join_path(prefix, 'lib'))
-        for binfile in ['selftest', 'selftest-funhpc',
+        for binfile in [# 'selftest', 'selftest-funhpc',
                         'benchmark', 'benchmark2', 'fibonacci', 'hello',
                         'pingpong']:
             shutil.copy(binfile, join_path(prefix, 'bin'))
