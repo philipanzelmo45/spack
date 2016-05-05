@@ -37,7 +37,7 @@ class Cactusext(Package):
     depends_on("simulationio", when='+simulationio')
 
     # Configure dependencies for convenience
-    cactusext_compiler = 'gcc@5.3.0-spack'
+    cactusext_compiler = 'gcc@6.1.0-spack'
     git_compiler = cactusext_compiler
     if sys.platform == 'darwin':
         git_compiler = 'clang@7.3.0-apple'
