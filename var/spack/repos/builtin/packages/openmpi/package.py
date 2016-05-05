@@ -57,12 +57,11 @@ class Openmpi(Package):
 
 
     def install(self, spec, prefix):
-        config_args = [
-            "--prefix=%s" % prefix,
-            "--enable-openib-connectx-xrc=no",
-            "--enable-shared",
-            "--enable-static"]
-        # TODO: Use "which ofed_info" to find verbs path
+        config_args = ["--prefix=%s" % prefix,
+                       "--with-hwloc=%s" % spec['hwloc'].prefix,
+                       "--enable-shared",
+                       "--enable-static",
+                       "--enable-openib-connectx-xrc=no"]
 
         # Variants
         if '+tm' in spec:
