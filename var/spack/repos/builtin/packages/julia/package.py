@@ -1,5 +1,6 @@
 from spack import *
 import os
+import sys
 
 class Julia(Package):
     """The Julia Language: A fresh approach to technical computing"""
@@ -8,27 +9,28 @@ class Julia(Package):
 
     version('master',
             git='https://github.com/JuliaLang/julia.git', branch='master')
+    version('release-0.4',
+            git='https://github.com/JuliaLang/julia.git', branch='release-0.4')
     version('0.4.5', '69141ff5aa6cee7c0ec8c85a34aa49a6')
     version('0.4.3', '8a4a59fd335b05090dd1ebefbbe5aaac')
 
     patch('gc.patch')
     patch('openblas.patch', when='@0.4:0.4.5')
 
+    variant('binutils', default=sys.platform!='darwin',
+            description="Build via binutils")
+
     # Build-time dependencies:
     # depends_on("awk")
-    # depends_on("m4")
+    depends_on("m4")
     # depends_on("pkg-config")
-
+ 
     # Combined build-time and run-time dependencies:
-    depends_on("binutils")
+    depends_on("binutils", when='+binutils')
     depends_on("cmake @2.8:")
     depends_on("git")
     depends_on("openssl")
     depends_on("python @2.7:2.999")
-
-    # I think that Julia requires the dependencies above, but it
-    # builds fine (on my system) without these. We should enable them
-    # as necessary.
 
     # Run-time dependencies:
     # depends_on("arpack")
