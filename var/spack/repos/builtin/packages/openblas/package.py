@@ -14,18 +14,21 @@ class Openblas(Package):
 
     variant('shared', default=True, description="Build shared libraries as well as static libs.")
     variant('openmp', default=True, description="Enable OpenMP support.")
+    variant('fpic', default=True, description="Build position independent code")
 
     # virtual dependency
     provides('blas')
     provides('lapack')
 
+    patch('make.patch')
 
     def install(self, spec, prefix):
         # Openblas is picky about compilers. Configure fails with
         # FC=/abs/path/to/f77, whereas FC=f77 works fine.
         # To circumvent this, provide basename only:
         make_defs = ['CC=%s' % os.path.basename(spack_cc),
-                     'FC=%s' % os.path.basename(spack_f77)]
+                     'FC=%s' % os.path.basename(spack_f77),
+                     'MAKE_NO_J=1']
 
         make_targets = ['libs', 'netlib']
 
@@ -33,6 +36,8 @@ class Openblas(Package):
         if '+shared' in spec:
             make_targets += ['shared']
         else:
+            if '+fpic' in spec:
+                make_defs.extend(['CFLAGS=-fPIC', 'FFLAGS=-fPIC'])
             make_defs += ['NO_SHARED=1']
 
         # fix missing _dggsvd_ and _sggsvd_
@@ -119,7 +124,7 @@ return 0;
             # TODO: Automate these path and library settings
             cc('-c', "-I%s" % join_path(spec.prefix, "include"), "check.c")
             cc('-o', "check", "check.o",
-               "-L%s" % join_path(spec.prefix, "lib"), "-llapack", "-lblas")
+               "-L%s" % join_path(spec.prefix, "lib"), "-llapack", "-lblas", "-lpthread")
             try:
                 check = Executable('./check')
                 output = check(return_output=True)

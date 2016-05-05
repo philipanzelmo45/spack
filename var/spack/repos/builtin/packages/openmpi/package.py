@@ -1,7 +1,5 @@
-import os
-
 from spack import *
-
+import os
 
 class Openmpi(Package):
     """The Open MPI Project is an open source Message Passing Interface
@@ -40,6 +38,7 @@ class Openmpi(Package):
 
     depends_on('hwloc')
 
+
     def url_for_version(self, version):
         return "http://www.open-mpi.org/software/ompi/v%s/downloads/openmpi-%s.tar.bz2" % (version.up_to(2), version)
 
@@ -49,6 +48,12 @@ class Openmpi(Package):
         spack_env.set('OMPI_CXX', spack_cxx)
         spack_env.set('OMPI_FC', spack_fc)
         spack_env.set('OMPI_F77', spack_f77)
+
+    def setup_dependent_package(self, module, dep_spec):
+        self.spec.mpicc  = join_path(self.prefix.bin, 'mpicc')
+        self.spec.mpicxx = join_path(self.prefix.bin, 'mpic++')
+        self.spec.mpifc  = join_path(self.prefix.bin, 'mpif90')
+        self.spec.mpif77 = join_path(self.prefix.bin, 'mpif77')
 
 
     def install(self, spec, prefix):
