@@ -38,6 +38,9 @@ class Cactusext(Package):
 
     # Configure dependencies for convenience
     cactusext_compiler = 'gcc@5.3.0-spack'
+    git_compiler = cactusext_compiler
+    if sys.platform == 'darwin':
+        git_compiler = 'clang@7.3.0-apple'
     jemalloc_compiler = cactusext_compiler
     if sys.platform == 'darwin':
         jemalloc_compiler = 'clang@7.3.0-apple'
@@ -47,6 +50,9 @@ class Cactusext(Package):
 
     depends_on("blas ^openblas")
     depends_on("boost +mpi")
+    git_deps = ['autoconf', 'curl', 'expat', 'openssl', 'zlib']
+    depends_on("git %"+git_compiler+
+               ''.join([" ^"+dep+"%"+cactusext_compiler for dep in git_deps]))
     depends_on("hdf5 @1.10.0 +mpi")
     depends_on("jemalloc %"+jemalloc_compiler)
     depends_on("lapack ^openblas")
