@@ -37,6 +37,16 @@ class Cactusext(Package):
     depends_on("simulationio", when='+simulationio')
 
     # Configure dependencies for convenience
+
+    # Virtual packages
+    depends_on("blas ^openblas")
+    depends_on("lapack ^openblas")
+    depends_on("mpi ^openmpi")
+
+    # Versions
+    depends_on("hdf5 @1.10.0")
+
+    # Compilers
     cactusext_compiler = 'gcc@6.1.0-spack'
     git_compiler = cactusext_compiler
     if sys.platform == 'darwin':
@@ -48,15 +58,36 @@ class Cactusext(Package):
     if sys.platform == 'darwin':
         python_compiler = 'clang@7.3.0-apple'
 
-    depends_on("blas ^openblas")
-    depends_on("boost +mpi")
+    depends_on("blas %"+cactusext_compiler)
+    depends_on("fftw %"+cactusext_compiler)
+    depends_on("gsl %"+cactusext_compiler)
+    depends_on("hdf5 %"+cactusext_compiler)
+    depends_on("hwloc %"+cactusext_compiler)
+    depends_on("lapack %"+cactusext_compiler)
+    depends_on("lua %"+cactusext_compiler)
+    depends_on("mpi %"+cactusext_compiler)
+    depends_on("openssl %"+cactusext_compiler)
+    depends_on("papi %"+cactusext_compiler)
+    depends_on("petsc %"+cactusext_compiler)
+    depends_on("zlib %"+cactusext_compiler)
+
+    depends_on("funhpc %"+cactusext_compiler, when='+funhpc')
+    depends_on("simulationio %"+cactusext_compiler, when='+simulationio')
+
+    depends_on("libsigsegv %"+cactusext_compiler)
+    depends_on("openmpi %"+cactusext_compiler)
+
     git_deps = ['autoconf', 'curl', 'expat', 'openssl', 'zlib']
     depends_on("git %"+git_compiler+
                ''.join([" ^"+dep+"%"+cactusext_compiler for dep in git_deps]))
-    depends_on("hdf5 @1.10.0 +mpi")
     depends_on("jemalloc %"+jemalloc_compiler)
-    depends_on("lapack ^openblas")
-    depends_on("mpi ^openmpi")
+    python_deps = ['bzip2', 'ncurses', 'readline', 'openssl', 'sqlite', 'zlib']
+    depends_on("python %"+python_compiler+
+               ''.join([" ^"+dep+"%"+cactusext_compiler
+                        for dep in python_deps]))
+
+    # Options
+    depends_on("boost +mpi")
     openmpi_opts = []
     try:
         ibv_devinfo = which('ibv_devinfo')
@@ -66,10 +97,6 @@ class Cactusext(Package):
         pass
     depends_on("openmpi"+''.join([" "+opt for opt in openmpi_opts]))
     depends_on("petsc +boost +hdf5 +mpi ~mumps")
-    python_deps = ['bzip2', 'ncurses', 'readline', 'openssl', 'sqlite', 'zlib']
-    depends_on("python %"+python_compiler+
-               ''.join([" ^"+dep+"%"+cactusext_compiler
-                        for dep in python_deps]))
 
     def install(self, spec, prefix):
         # This package does not install anything per se; it only
