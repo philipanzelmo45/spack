@@ -39,9 +39,11 @@ class Cactusext(Package):
     # Configure dependencies for convenience
 
     # Virtual packages
-    depends_on("blas ^openblas")
-    depends_on("lapack ^openblas")
-    depends_on("mpi ^openmpi")
+    # depends_on("blas ^openblas")
+    # depends_on("lapack ^openblas")
+    # depends_on("mpi ^openmpi")
+    depends_on("openblas")
+    depends_on("openmpi")
 
     # Versions
     depends_on("hdf5 @1.10.0")
