@@ -6,4 +6,3 @@
 # -------------------------------------------------------------------------
 repos:
   - $spack/var/spack/repos/builtin
-  - $spack/var/spack/repos/eschnett
