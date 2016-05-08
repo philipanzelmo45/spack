@@ -93,9 +93,11 @@ class Cactusext(Package):
     openmpi_opts = []
     try:
         #TODO ibv_devinfo = which('ibv_devinfo')
-        #TODO ibv_devinfo(output=str)
-        env = which('env')
-        env('ibv_devinfo', output=str, error=str)
+        #TODO ibv_devinfo(output=str, error=str)
+        ibv_devices = which('ibv_devices')
+        ibv_devices(output=str, error=str)
+        #TODO env = which('env')
+        #TODO env('ibv_devinfo', output=str, error=str)
         openmpi_opts.append("+verbs")
     except:
         pass
