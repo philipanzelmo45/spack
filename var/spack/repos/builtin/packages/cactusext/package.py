@@ -92,8 +92,10 @@ class Cactusext(Package):
     depends_on("boost +mpi")
     openmpi_opts = []
     try:
-        ibv_devinfo = which('ibv_devinfo')
-        ibv_devinfo(output=str)
+        #TODO ibv_devinfo = which('ibv_devinfo')
+        #TODO ibv_devinfo(output=str)
+        env = which('env')
+        env('ibv_devinfo', output=str, error=str)
         openmpi_opts.append("+verbs")
     except:
         pass
