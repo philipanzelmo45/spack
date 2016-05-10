@@ -1,4 +1,5 @@
 from spack import *
+import os
 import sys
 
 class Cactusext(Package):
@@ -17,6 +18,7 @@ class Cactusext(Package):
             git='https://bitbucket.org/cactuscode/coredoc.git', branch='master')
 
     variant('funhpc', default=False, description='Enable FunHPC')
+    variant('llvm', default=False, description='Enable LLVM')
     variant('simulationio', default=False, description='Enable SimulationIO')
 
     # Actual dependencies
@@ -32,8 +34,10 @@ class Cactusext(Package):
     depends_on("papi")
     depends_on("petsc +mpi")
     depends_on("zlib")
+    # TODO: Add CUDA
 
     depends_on("funhpc", when='+funhpc')
+    depends_on("llvm", when='+llvm')
     depends_on("simulationio", when='+simulationio')
 
     # Configure dependencies for convenience
@@ -46,7 +50,10 @@ class Cactusext(Package):
     depends_on("openmpi")
 
     # Versions
+    # TODO: Remove this once the latest HDF5 version is again the default
     depends_on("hdf5 @1.10.0")
+    # TODO: Remove this once Spack chooses the latest 2.7 version by default
+    depends_on("python @2.7.11")
 
     # Compilers
     cactusext_compiler = 'gcc@6.1.0-spack'
@@ -74,15 +81,17 @@ class Cactusext(Package):
     depends_on("zlib %"+cactusext_compiler)
 
     depends_on("funhpc %"+cactusext_compiler, when='+funhpc')
+    depends_on("llvm %"+cactusext_compiler, when='+llvm')
     depends_on("simulationio %"+cactusext_compiler, when='+simulationio')
 
+    # These are apparently not deduced -- why?
     depends_on("libsigsegv %"+cactusext_compiler)
     depends_on("openmpi %"+cactusext_compiler)
 
     git_deps = ['autoconf', 'curl', 'expat', 'openssl', 'zlib']
     depends_on("git %"+git_compiler+
                ''.join([" ^"+dep+"%"+cactusext_compiler for dep in git_deps]))
-    depends_on("jemalloc %"+jemalloc_compiler)
+    depends_on("jemalloc %"+jemalloc_compiler, when='+funhpc')
     python_deps = ['bzip2', 'ncurses', 'readline', 'openssl', 'sqlite', 'zlib']
     depends_on("python %"+python_compiler+
                ''.join([" ^"+dep+"%"+cactusext_compiler
@@ -90,18 +99,25 @@ class Cactusext(Package):
 
     # Options
     depends_on("boost +mpi")
+    # TODO: avoid ~polly ~gold
+    # ~lldb ~internal_unwind ~polly ~libcxx ~compiler-rt ~gold
+    depends_on("llvm", when='+llvm')
     openmpi_opts = []
+    if (os.path.isfile("/usr/include/pmi.h") or
+        os.path.isfile("/usr/slurm/include/pmi.h") or
+        os.path.isfile("/usr/include/pmi2.h") or
+        os.path.isfile("/usr/slurm/include/pmi2.h")):
+        openmpi_opts.append("+pmi")
+    else:
+        openmpi_opts.append("~pmi")
     try:
-        #TODO ibv_devinfo = which('ibv_devinfo')
-        #TODO ibv_devinfo(output=str, error=str)
         ibv_devices = which('ibv_devices')
         ibv_devices(output=str, error=str)
-        #TODO env = which('env')
-        #TODO env('ibv_devinfo', output=str, error=str)
         openmpi_opts.append("+verbs")
     except:
-        pass
+        openmpi_opts.append("~verbs")
     depends_on("openmpi"+''.join([" "+opt for opt in openmpi_opts]))
+    # TODO: Mumps doesn't build everywhere; enable it once it works
     depends_on("petsc +boost +hdf5 +mpi ~mumps")
 
     def install(self, spec, prefix):
