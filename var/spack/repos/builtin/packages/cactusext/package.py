@@ -108,14 +108,12 @@ class Cactusext(Package):
         os.path.isfile("/usr/include/pmi2.h") or
         os.path.isfile("/usr/slurm/include/pmi2.h")):
         openmpi_opts.append("+pmi")
-    else:
-        openmpi_opts.append("~pmi")
     try:
         ibv_devices = which('ibv_devices')
         ibv_devices(output=str, error=str)
         openmpi_opts.append("+verbs")
     except:
-        openmpi_opts.append("~verbs")
+        pass
     depends_on("openmpi"+''.join([" "+opt for opt in openmpi_opts]))
     # TODO: Mumps doesn't build everywhere; enable it once it works
     depends_on("petsc +boost +hdf5 +mpi ~mumps")
