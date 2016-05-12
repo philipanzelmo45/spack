@@ -25,7 +25,7 @@ class Funhpc(Package):
              'MPIRUN=%s' % join_path(spec['mpi'].prefix.bin, 'mpirun'),
              'SIMFACTORY_CEREAL_DIR=%s' % spec['cereal'].prefix,
              'SIMFACTORY_CEREAL_CXXFLAGS=-I%s' % spec['cereal'].prefix.include,
-             'SIMFACTORY_CEREAL_LDFLAGS=-L%s' % spec['cereal'].prefix.lib,
+             'SIMFACTORY_CEREAL_LDFLAGS=',
              'SIMFACTORY_CEREAL_LIBS=',
              'SIMFACTORY_HWLOC_DIR=%s' % spec['hwloc'].prefix,
              'SIMFACTORY_HWLOC_CXXFLAGS=-I%s' % spec['hwloc'].prefix.include,
