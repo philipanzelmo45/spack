@@ -23,7 +23,7 @@ class Cactusext(Package):
 
     # Actual dependencies
     depends_on("blas")
-    depends_on("fftw +mpi")
+    depends_on("fftw +mpi +openmp")
     depends_on("gsl")
     depends_on("hdf5 +mpi")
     depends_on("hwloc")
