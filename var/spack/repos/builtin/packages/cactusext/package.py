@@ -49,9 +49,6 @@ class Cactusext(Package):
     # Configure dependencies for convenience
 
     # Virtual packages
-    deps["blas"].append("^openblas")
-    deps["lapack"].append("^openblas")
-    deps["mpi"].append("^openmpi")
     deps["openblas"] = []
     deps["openmpi"] = []
 
