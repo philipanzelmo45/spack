@@ -137,7 +137,7 @@ class Cactusext(Package):
             when = " ".join(whens[pkg])
         except:
             when = None
-        print pkg + " " + " ".join(opts), ("when=" + when if when else "")
+        # print pkg + " " + " ".join(opts), ("when=" + when if when else "")
         depends_on(pkg + " " + " ".join(opts), when=when)
 
     def install(self, spec, prefix):
