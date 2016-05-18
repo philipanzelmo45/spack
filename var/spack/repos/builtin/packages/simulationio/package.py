@@ -38,8 +38,8 @@ class Simulationio(Package):
         os.mkdir(join_path(prefix, 'bin'))
         os.mkdir(join_path(prefix, 'include'))
         os.mkdir(join_path(prefix, 'lib'))
-        for binfile in ['benchmark', 'convert-carpet-output', 'list', 'example',
-                        'test_RegionCalculus', 'test_SimulationIO']:
+        for binfile in ['benchmark', 'convert-carpet-output', 'copy', 'list',
+                        'example', 'test_RegionCalculus', 'test_SimulationIO']:
             shutil.copy(binfile, join_path(prefix, 'bin'))
         for incfile in glob.iglob('*.hpp'):
             shutil.copy(incfile, join_path(prefix, 'include'))
