@@ -140,17 +140,6 @@ class Cactusext(Package):
         print pkg + " " + " ".join(opts), ("when=" + when if when else "")
         depends_on(pkg + " " + " ".join(opts), when=when)
 
-    # depends_on("cereal %gcc@6.1.0-spack")
-    # depends_on("cmake %gcc@6.1.0-spack")
-    # depends_on("curl %gcc@6.1.0-spack")
-    # depends_on("hwloc %gcc@6.1.0-spack")
-    # depends_on("libpciaccess %gcc@6.1.0-spack")
-    # depends_on("libtool %gcc@6.1.0-spack")
-    # depends_on("m4 %gcc@6.1.0-spack")
-    # depends_on("ncurses %gcc@6.1.0-spack")
-    # depends_on("qthreads %gcc@6.1.0-spack")
-    # depends_on("swig %gcc@6.1.0-spack")
-
     def install(self, spec, prefix):
         # This package does not install anything per se; it only
         # installs many of the dependencies that Cactus-based
