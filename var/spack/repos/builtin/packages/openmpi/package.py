@@ -87,6 +87,8 @@ class Openmpi(Package):
 
     variant('sqlite3', default=False, description='Build sqlite3 support')
 
+    variant('vt', default=True, description='Build support for contributed package vt')
+
     # TODO : support for CUDA is missing
 
     provides('mpi@:2.2', when='@1.6.5')
@@ -137,7 +139,8 @@ class Openmpi(Package):
             # Other options
             '--enable-mpi-thread-multiple' if '+thread_multiple' in spec else '--disable-mpi-thread-multiple',
             '--with-pmi' if '+pmi' in spec else '--without-pmi',
-            '--with-sqlite3' if '+sqlite3' in spec else '--without-sqlite3'
+            '--with-sqlite3' if '+sqlite3' in spec else '--without-sqlite3',
+            '--enable-vt' if '+vt' in spec else '--disable-vt'
         ])
         if '+verbs' in spec:
             path = _verbs_dir()
