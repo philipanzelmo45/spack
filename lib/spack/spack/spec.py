@@ -1750,8 +1750,7 @@ class Spec(object):
                 self.variants,
                 self.architecture,
                 self.compiler,
-                self.compiler_flags,
-                self.dag_hash())
+                self.compiler_flags)
 
     def eq_node(self, other):
         """Equality with another spec, not including dependencies."""
@@ -2016,10 +2015,13 @@ class SpecLexer(spack.parse.Lexer):
             (r'\s+', lambda scanner, val: None)])
 
 
+# Lexer is always the same for every parser.
+_lexer = SpecLexer()
+
 class SpecParser(spack.parse.Parser):
 
     def __init__(self):
-        super(SpecParser, self).__init__(SpecLexer())
+        super(SpecParser, self).__init__(_lexer)
         self.previous = None
 
     def do_parse(self):
