@@ -31,6 +31,7 @@ class Cactusext(Package):
     deps["fftw"] = ["+mpi", "+openmp"]
     deps["gsl"] = []
     deps["hdf5"] = ["+mpi"]
+    deps["hdf5-blosc"] = []
     deps["hwloc"] = []
     deps["lapack"] = []
     deps["lmod"] = []
@@ -86,6 +87,7 @@ class Cactusext(Package):
     deps["fftw"].append("%"+cactusext_compiler)
     deps["gsl"].append("%"+cactusext_compiler)
     deps["hdf5"].append("%"+cactusext_compiler)
+    deps["hdf5-blosc"].append("%"+cactusext_compiler)
     deps["hwloc"].append("%"+cactusext_compiler)
     deps["lmod"].append("%"+cactusext_compiler)
     deps["lua"].append("%"+cactusext_compiler)
