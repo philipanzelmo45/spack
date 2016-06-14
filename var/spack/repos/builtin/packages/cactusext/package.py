@@ -33,6 +33,7 @@ class Cactusext(Package):
     deps["hdf5"] = ["+mpi"]
     deps["hwloc"] = []
     deps["lapack"] = []
+    deps["lmod"] = []
     deps["lua"] = []
     deps["mpi"] = []
     deps["openssl"] = []
@@ -86,6 +87,7 @@ class Cactusext(Package):
     deps["gsl"].append("%"+cactusext_compiler)
     deps["hdf5"].append("%"+cactusext_compiler)
     deps["hwloc"].append("%"+cactusext_compiler)
+    deps["lmod"].append("%"+cactusext_compiler)
     deps["lua"].append("%"+cactusext_compiler)
     deps["openssl"].append("%"+cactusext_compiler)
     deps["papi"].append("%"+cactusext_compiler)
