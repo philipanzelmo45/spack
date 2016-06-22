@@ -39,8 +39,11 @@ class Julia(Package):
     version('0.4.5', '69141ff5aa6cee7c0ec8c85a34aa49a6')
     version('0.4.3', '8a4a59fd335b05090dd1ebefbbe5aaac')
 
+    variant("cxx", default=False, "Prepare for Julia Cxx package")
+    variant("hdf5", default=False, "Prepare for Julia HDF5 package")
+    variant("mpi", default=False, "Prepare for Julia MPI package")
+
     patch('gc.patch', when='@0.4:0.4.5')
-    patch('gc.patch', when='@release-0.4')
     patch('openblas.patch', when='@0.4:0.4.5')
 
     # Build-time dependencies:
@@ -93,8 +96,8 @@ class Julia(Package):
     # USE_SYSTEM_LIBGIT2=0
 
     # Run-time dependencies for Julia packages:
-    depends_on("hdf5")
-    depends_on("mpi")
+    depends_on("hdf5", when="+hdf5")
+    depends_on("mpi", when="+mpi")
 
     def install(self, spec, prefix):
         # Explicitly setting CC, CXX, or FC breaks building libuv, one
@@ -112,6 +115,14 @@ class Julia(Package):
             # "USE_SYSTEM_MPFR=1",
             # "USE_SYSTEM_PCRE=1",
             "prefix=%s" % prefix]
+        if "+cxx" in spec:
+            if not ("@master" in spec):
+                raise InstallError\
+                    ("Variant +cxx requires the @master version of Julia")
+            options += [
+                "BUILD_LLVM_CLANG=1",
+                "LLVM_ASSERTIONS=1",
+                "USE_LLVM_SHLIB=1"]
         with open('Make.user', 'w') as f:
             f.write('\n'.join(options) + '\n')
         make()
