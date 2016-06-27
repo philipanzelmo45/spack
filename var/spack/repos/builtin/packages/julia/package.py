@@ -40,9 +40,9 @@ class Julia(Package):
     version('0.4.5', '69141ff5aa6cee7c0ec8c85a34aa49a6')
     version('0.4.3', '8a4a59fd335b05090dd1ebefbbe5aaac')
 
-    variant("cxx", default=False, "Prepare for Julia Cxx package")
-    variant("hdf5", default=False, "Prepare for Julia HDF5 package")
-    variant("mpi", default=False, "Prepare for Julia MPI package")
+    variant("cxx", default=False, description="Prepare for Julia Cxx package")
+    variant("hdf5", default=False, description="Prepare for Julia HDF5 package"
+    variant("mpi", default=False, description="Prepare for Julia MPI package")
 
     patch('gc.patch', when='@0.4:0.4.5')
     patch('openblas.patch', when='@0.4:0.4.5')
