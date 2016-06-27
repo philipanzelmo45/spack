@@ -41,7 +41,7 @@ class Julia(Package):
     version('0.4.3', '8a4a59fd335b05090dd1ebefbbe5aaac')
 
     variant("cxx", default=False, description="Prepare for Julia Cxx package")
-    variant("hdf5", default=False, description="Prepare for Julia HDF5 package"
+    variant("hdf5", default=False, description="Prepare for Julia HDF5 package")
     variant("mpi", default=False, description="Prepare for Julia MPI package")
 
     patch('gc.patch', when='@0.4:0.4.5')
