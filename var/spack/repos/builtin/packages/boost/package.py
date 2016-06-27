@@ -25,7 +25,6 @@
 from spack import *
 import spack
 import sys
-
 import os
 
 
@@ -91,6 +90,7 @@ class Boost(Package):
                                 'system',
                                 'test',
                                 'thread',
+                                'timer',
                                 'wave'])
 
     # mpi/python are not installed by default because they pull in many
@@ -132,7 +132,7 @@ class Boost(Package):
                "/boost/%s/boost_%s.tar.bz2" % (dots, underscores)
 
     def determine_toolset(self, spec):
-        if spec.satisfies("arch=darwin-x86_64"):
+        if spec.satisfies("platform=darwin"):
             return 'darwin'
 
         toolsets = {'g++': 'gcc',
