@@ -58,13 +58,14 @@ class Cactusext(Package):
     deps["funhpc"] = []
     deps["git"] = []
     deps["jemalloc"] = []
-    deps["julia"] = []
+    deps["julia"] = ["@master", "+cxx", "+hdf5", "+mpi"]
     # deps["libsigsegv"] = []
     deps["llvm"] = []
     deps["python"] = []
     deps["simulationio"] = []
 
     whens["jemalloc"] = ["+funhpc"]
+    whens["julia"] = ["+julia"]
 
     # Versions
     # TODO: Remove this once the latest HDF5 version is again the default
