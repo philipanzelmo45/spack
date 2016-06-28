@@ -24,6 +24,7 @@
 ##############################################################################
 
 from spack import *
+import os
 import sys
 
 
@@ -100,6 +101,10 @@ class Julia(Package):
     depends_on("mpi", when="+mpi")
 
     def install(self, spec, prefix):
+        # We need git tags
+        if os.path.isfile(".git/shallow"):
+            git = which("git")
+            git("fetch", "--unshallow")
         # Explicitly setting CC, CXX, or FC breaks building libuv, one
         # of Julia's dependencies. This might be a Darwin-specific
         # problem. Given how Spack sets up compilers, Julia should
