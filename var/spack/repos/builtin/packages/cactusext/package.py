@@ -58,7 +58,7 @@ class Cactusext(Package):
     deps["funhpc"] = []
     deps["git"] = []
     deps["jemalloc"] = []
-    deps["julia"] = ["@master", "+cxx", "+hdf5", "+mpi"]
+    deps["julia"] = ["@master", "+hdf5", "+mpi"]   # "+plots", "+python"
     # deps["libsigsegv"] = []
     deps["llvm"] = []
     deps["python"] = []

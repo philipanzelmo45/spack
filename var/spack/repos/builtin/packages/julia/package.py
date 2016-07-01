@@ -42,8 +42,12 @@ class Julia(Package):
     version('0.4.3', '8a4a59fd335b05090dd1ebefbbe5aaac')
 
     variant("cxx", default=False, description="Prepare for Julia Cxx package")
-    variant("hdf5", default=False, description="Prepare for Julia HDF5 package")
-    variant("mpi", default=False, description="Prepare for Julia MPI package")
+    variant("hdf5", default=False, description="Install Julia HDF5 package")
+    variant("mpi", default=False, description="Install Julia MPI package")
+    variant("plot", default=False,
+            description="Install Julia plotting packages")
+    variant("python", default=False,
+            description="Install Julia Python package")
 
     patch('gc.patch', when='@0.4:0.4.5')
     patch('openblas.patch', when='@0.4:0.4.5')
@@ -55,7 +59,7 @@ class Julia(Package):
     # depends_on("awk")
     depends_on("m4")
     # depends_on("pkg-config")
- 
+
     # Combined build-time and run-time dependencies:
     depends_on("binutils", when='+binutils')
     depends_on("cmake @2.8:")
@@ -99,6 +103,7 @@ class Julia(Package):
     # Run-time dependencies for Julia packages:
     depends_on("hdf5", when="+hdf5")
     depends_on("mpi", when="+mpi")
+    depends_on("py-matplotlib", when="+plot")
 
     def install(self, spec, prefix):
         # We need git tags
@@ -132,3 +137,88 @@ class Julia(Package):
             f.write('\n'.join(options) + '\n')
         make()
         make("install")
+
+        # Julia's package manager needs a certificate
+        curl = which("curl")
+        cacert_file = join_path(prefix, "etc", "curl", "cacert.pem")
+        curl("--create-dirs",
+             "--output", cacert_file,
+             "https://curl.haxx.se/ca/cacert.pem")
+
+        # Put compiler cache into a private directory
+        cachedir = join_path(prefix, "var", "julia", "cache")
+        mkdirp(cachedir)
+
+        # Store Julia packages in a private directory
+        pkgdir = join_path(prefix, "var", "julia", "pkg")
+        mkdirp(pkgdir)
+
+        # Configure Julia
+        with open(join_path(prefix, "etc", "julia", "juliarc.jl"),
+                  "a") as juliarc:
+            juliarc.write('# Point package manager to working certificates\n')
+            juliarc.write('LibGit2.set_ssl_cert_locations("%s")\n' %
+                          cacert_file)
+            juliarc.write('\n')
+            juliarc.write('# Put compiler cache into a private directory\n')
+            juliarc.write('empty!(Base.LOAD_CACHE_PATH)\n')
+            juliarc.write('unshift!(Base.LOAD_CACHE_PATH, "%s")\n' % cachedir)
+            juliarc.write('\n')
+            juliarc.write('# Put Julia packages into a private directory\n')
+            juliarc.write('ENV["JULIA_PKGDIR"] = "%s"\n' % pkgdir)
+            juliarc.write('\n')
+
+        # Install some commonly used packages
+        julia = Executable(join_path(prefix.bin, "julia"))
+        julia("-e", 'Pkg.init(); Pkg.update()')
+
+        # Install HDF5
+        if "+hdf5" in spec:
+            with open(join_path(prefix, "etc", "julia", "juliarc.jl"),
+                      "a") as juliarc:
+                juliarc.write('# HDF5\n')
+                juliarc.write('push!(Libdl.DL_LOAD_PATH, "%s")\n' %
+                              spec["hdf5"].prefix.lib)
+                juliarc.write('\n')
+            julia("-e", 'Pkg.add("HDF5"); using HDF5')
+            julia("-e", 'Pkg.add("JLD"); using JLD')
+
+        # Install MPI
+        if "+mpi" in spec:
+            with open(join_path(prefix, "etc", "julia", "juliarc.jl"),
+                      "a") as juliarc:
+                juliarc.write('# MPI\n')
+                juliarc.write('ENV["JULIA_MPI_C_COMPILER"] = "%s"\n' %
+                              join_path(spec["mpi"].prefix.bin, "mpicc"))
+                juliarc.write('ENV["JULIA_MPI_Fortran_COMPILER"] = "%s"\n' %
+                              join_path(spec["mpi"].prefix.bin, "mpifort"))
+                juliarc.write('\n')
+            julia("-e", 'Pkg.add("MPI"); using MPI')
+
+        # Install Python
+        if "+python" in spec or "+plot" in spec:
+            with open(join_path(prefix, "etc", "julia", "juliarc.jl"),
+                      "a") as juliarc:
+                juliarc.write('# Python\n')
+                juliarc.write('ENV["PYTHON"] = "%s"\n' % spec["python"].prefix)
+                juliarc.write('\n')
+            # Python's OpenSSL package installer complains:
+            # Error: PREFIX too long: 166 characters, but only 128 allowed
+            # Error: post-link failed for: openssl-1.0.2g-0
+            julia("-e", 'Pkg.add("PyCall"); using PyCall')
+
+        if "+plot" in spec:
+            julia("-e", 'Pkg.add("PyPlot"); using PyPlot')
+            julia("-e", 'Pkg.add("Colors"); using Colors')
+            # These require maybe Gtk and ImageMagick
+            julia("-e", 'Pkg.add("Plots"); using Plots')
+            julia("-e", 'Pkg.add("PlotRecipes"); using PlotRecipes')
+            julia("-e", 'Pkg.add("UnicodePlots"); using UnicodePlots')
+            julia("-e", """\
+using Plots
+using UnicodePlots
+unicodeplots()
+plot(x->sin(x)*cos(x), linspace(0, 2pi))
+""")
+
+        julia("-e", 'Pkg.status()')
