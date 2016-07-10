@@ -156,10 +156,12 @@ class Julia(Package):
         # Configure Julia
         with open(join_path(prefix, "etc", "julia", "juliarc.jl"),
                   "a") as juliarc:
-            juliarc.write('# Point package manager to working certificates\n')
-            juliarc.write('LibGit2.set_ssl_cert_locations("%s")\n' %
-                          cacert_file)
-            juliarc.write('\n')
+            if "@master" in spec:
+                juliarc.write(
+                    '# Point package manager to working certificates\n')
+                juliarc.write('LibGit2.set_ssl_cert_locations("%s")\n' %
+                              cacert_file)
+                juliarc.write('\n')
             juliarc.write('# Put compiler cache into a private directory\n')
             juliarc.write('empty!(Base.LOAD_CACHE_PATH)\n')
             juliarc.write('unshift!(Base.LOAD_CACHE_PATH, "%s")\n' % cachedir)
