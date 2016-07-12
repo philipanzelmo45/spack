@@ -25,30 +25,26 @@
 from spack import *
 
 
-class Libxml2(Package):
-    """Libxml2 is the XML C parser and toolkit developed for the Gnome
-       project (but usable outside of the Gnome platform), it is free
-       software available under the MIT License."""
-    homepage = "http://xmlsoft.org"
-    url      = "http://xmlsoft.org/sources/libxml2-2.9.2.tar.gz"
+class RDplyr(Package):
+    """A fast, consistent tool for working with data frame like objects, both
+    in memory and out of memory."""
 
-    version('2.9.2', '9e6a9aca9d155737868b3dc5fd82f788')
+    homepage = "https://github.com/hadley/dplyr"
+    url      = "https://cran.r-project.org/src/contrib/dplyr_0.5.0.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/dplyr"
 
-    variant('python', default=False, description='Enable Python support')
+    version('0.5.0', '1fcafcacca70806eea2e6d465cdb94ef')
 
-    extends('python', when='+python', ignore=r'(bin.*$)|(include.*$)|(share.*$)|(lib/libxml2.*$)|(lib/xml2.*$)|(lib/cmake.*$)')
-    depends_on('zlib')
-    depends_on('xz')
+    extends('R')
+    depends_on('r-assertthat')
+    depends_on('r-R6')
+    depends_on('r-rcpp')
+    depends_on('r-tibble')
+    depends_on('r-magrittr')
+    depends_on('r-lazyeval')
+    depends_on('r-dbi')
+    depends_on('r-bh')
 
     def install(self, spec, prefix):
-        if '+python' in spec:
-            python_args = ["--with-python=%s" % spec['python'].prefix,
-                           "--with-python-install-dir=%s" % site_packages_dir]
-        else:
-            python_args = ["--without-python"]
-
-        configure("--prefix=%s" % prefix,
-                  *python_args)
-
-        make()
-        make("install")
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)

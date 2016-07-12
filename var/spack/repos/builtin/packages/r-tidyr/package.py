@@ -25,30 +25,25 @@
 from spack import *
 
 
-class Libxml2(Package):
-    """Libxml2 is the XML C parser and toolkit developed for the Gnome
-       project (but usable outside of the Gnome platform), it is free
-       software available under the MIT License."""
-    homepage = "http://xmlsoft.org"
-    url      = "http://xmlsoft.org/sources/libxml2-2.9.2.tar.gz"
+class RTidyr(Package):
+    """An evolution of 'reshape2'. It's designed specifically for data tidying
+    (not general reshaping or aggregating) and works well with 'dplyr' data
+    pipelines."""
 
-    version('2.9.2', '9e6a9aca9d155737868b3dc5fd82f788')
+    homepage = "https://github.com/hadley/tidyr"
+    url      = "https://cran.r-project.org/src/contrib/tidyr_0.5.1.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/tidyr"
 
-    variant('python', default=False, description='Enable Python support')
+    version('0.5.1', '3cadc869510c054ed93d374ab44120bd')
 
-    extends('python', when='+python', ignore=r'(bin.*$)|(include.*$)|(share.*$)|(lib/libxml2.*$)|(lib/xml2.*$)|(lib/cmake.*$)')
-    depends_on('zlib')
-    depends_on('xz')
+    extends('R')
+    depends_on('r-tibble')
+    depends_on('r-dplyr')
+    depends_on('r-stringi')
+    depends_on('r-lazyeval')
+    depends_on('r-magrittr')
+    depends_on('r-rcpp')
 
     def install(self, spec, prefix):
-        if '+python' in spec:
-            python_args = ["--with-python=%s" % spec['python'].prefix,
-                           "--with-python-install-dir=%s" % site_packages_dir]
-        else:
-            python_args = ["--without-python"]
-
-        configure("--prefix=%s" % prefix,
-                  *python_args)
-
-        make()
-        make("install")
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)

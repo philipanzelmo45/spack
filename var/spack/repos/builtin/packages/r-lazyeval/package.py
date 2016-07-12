@@ -25,30 +25,19 @@
 from spack import *
 
 
-class Libxml2(Package):
-    """Libxml2 is the XML C parser and toolkit developed for the Gnome
-       project (but usable outside of the Gnome platform), it is free
-       software available under the MIT License."""
-    homepage = "http://xmlsoft.org"
-    url      = "http://xmlsoft.org/sources/libxml2-2.9.2.tar.gz"
+class RLazyeval(Package):
+    """An alternative approach to non-standard evaluation using formulas.
+    Provides a full implementation of LISP style 'quasiquotation', making it
+    easier to generate code with other code."""
 
-    version('2.9.2', '9e6a9aca9d155737868b3dc5fd82f788')
+    homepage = "https://cran.r-project.org/web/packages/lazyeval/index.html"
+    url      = "https://cran.r-project.org/src/contrib/lazyeval_0.2.0.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/lazyeval"
 
-    variant('python', default=False, description='Enable Python support')
+    version('0.2.0', 'df1daac908dcf02ae7e12f4335b1b13b')
 
-    extends('python', when='+python', ignore=r'(bin.*$)|(include.*$)|(share.*$)|(lib/libxml2.*$)|(lib/xml2.*$)|(lib/cmake.*$)')
-    depends_on('zlib')
-    depends_on('xz')
+    extends('R')
 
     def install(self, spec, prefix):
-        if '+python' in spec:
-            python_args = ["--with-python=%s" % spec['python'].prefix,
-                           "--with-python-install-dir=%s" % site_packages_dir]
-        else:
-            python_args = ["--without-python"]
-
-        configure("--prefix=%s" % prefix,
-                  *python_args)
-
-        make()
-        make("install")
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)

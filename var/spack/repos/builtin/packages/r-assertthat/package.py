@@ -25,30 +25,19 @@
 from spack import *
 
 
-class Libxml2(Package):
-    """Libxml2 is the XML C parser and toolkit developed for the Gnome
-       project (but usable outside of the Gnome platform), it is free
-       software available under the MIT License."""
-    homepage = "http://xmlsoft.org"
-    url      = "http://xmlsoft.org/sources/libxml2-2.9.2.tar.gz"
+class RAssertthat(Package):
+    """assertthat is an extension to stopifnot() that makes it easy to declare
+    the pre and post conditions that you code should satisfy, while also
+    producing friendly error messages so that your users know what they've done
+    wrong."""
 
-    version('2.9.2', '9e6a9aca9d155737868b3dc5fd82f788')
+    homepage = "https://cran.r-project.org/web/packages/assertthat/index.html"
+    url      = "https://cran.r-project.org/src/contrib/assertthat_0.1.tar.gz"
 
-    variant('python', default=False, description='Enable Python support')
+    version('0.1', '59f9d7f7c00077ea54d763b78eeb5798')
 
-    extends('python', when='+python', ignore=r'(bin.*$)|(include.*$)|(share.*$)|(lib/libxml2.*$)|(lib/xml2.*$)|(lib/cmake.*$)')
-    depends_on('zlib')
-    depends_on('xz')
+    extends('R')
 
     def install(self, spec, prefix):
-        if '+python' in spec:
-            python_args = ["--with-python=%s" % spec['python'].prefix,
-                           "--with-python-install-dir=%s" % site_packages_dir]
-        else:
-            python_args = ["--without-python"]
-
-        configure("--prefix=%s" % prefix,
-                  *python_args)
-
-        make()
-        make("install")
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)

@@ -25,30 +25,22 @@
 from spack import *
 
 
-class Libxml2(Package):
-    """Libxml2 is the XML C parser and toolkit developed for the Gnome
-       project (but usable outside of the Gnome platform), it is free
-       software available under the MIT License."""
-    homepage = "http://xmlsoft.org"
-    url      = "http://xmlsoft.org/sources/libxml2-2.9.2.tar.gz"
+class RTibble(Package):
+    """Provides a 'tbl_df' class that offers better checking and printing
+    capabilities than traditional data frames."""
 
-    version('2.9.2', '9e6a9aca9d155737868b3dc5fd82f788')
+    homepage = "https://github.com/hadley/tibble"
+    url      = "https://cran.r-project.org/src/contrib/tibble_1.1.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/tibble"
 
-    variant('python', default=False, description='Enable Python support')
+    version('1.1', '2fe9f806109d0b7fadafb1ffafea4cb8')
 
-    extends('python', when='+python', ignore=r'(bin.*$)|(include.*$)|(share.*$)|(lib/libxml2.*$)|(lib/xml2.*$)|(lib/cmake.*$)')
-    depends_on('zlib')
-    depends_on('xz')
+    extends('R')
+
+    depends_on('r-assertthat')
+    depends_on('r-lazyeval')
+    depends_on('r-rcpp')
 
     def install(self, spec, prefix):
-        if '+python' in spec:
-            python_args = ["--with-python=%s" % spec['python'].prefix,
-                           "--with-python-install-dir=%s" % site_packages_dir]
-        else:
-            python_args = ["--without-python"]
-
-        configure("--prefix=%s" % prefix,
-                  *python_args)
-
-        make()
-        make("install")
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)

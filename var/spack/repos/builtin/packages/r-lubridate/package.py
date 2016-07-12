@@ -25,30 +25,23 @@
 from spack import *
 
 
-class Libxml2(Package):
-    """Libxml2 is the XML C parser and toolkit developed for the Gnome
-       project (but usable outside of the Gnome platform), it is free
-       software available under the MIT License."""
-    homepage = "http://xmlsoft.org"
-    url      = "http://xmlsoft.org/sources/libxml2-2.9.2.tar.gz"
+class RLubridate(Package):
+    """Functions to work with date-times and timespans: fast and user friendly
+    parsing of date-time data, extraction and updating of components of a
+    date-time (years, months, days, hours, minutes, and seconds), algebraic
+    manipulation on date-time and timespan objects. The 'lubridate' package has
+    a consistent and memorable syntax that makes working with dates easy and
+    fun."""
 
-    version('2.9.2', '9e6a9aca9d155737868b3dc5fd82f788')
+    homepage = "https://cran.r-project.org/web/packages/lubridate/index.html"
+    url      = "https://cran.r-project.org/src/contrib/lubridate_1.5.6.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/lubridate"
 
-    variant('python', default=False, description='Enable Python support')
+    version('1.5.6', 'a5dc44817548ee219d26a10bae92e611')
 
-    extends('python', when='+python', ignore=r'(bin.*$)|(include.*$)|(share.*$)|(lib/libxml2.*$)|(lib/xml2.*$)|(lib/cmake.*$)')
-    depends_on('zlib')
-    depends_on('xz')
+    extends('R')
+    depends_on('r-stringr')
 
     def install(self, spec, prefix):
-        if '+python' in spec:
-            python_args = ["--with-python=%s" % spec['python'].prefix,
-                           "--with-python-install-dir=%s" % site_packages_dir]
-        else:
-            python_args = ["--without-python"]
-
-        configure("--prefix=%s" % prefix,
-                  *python_args)
-
-        make()
-        make("install")
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)
