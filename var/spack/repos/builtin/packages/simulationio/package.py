@@ -2,6 +2,7 @@ from spack import *
 import glob
 import os
 import shutil
+import sys
 
 class Simulationio(Package):
     """SimulationIO: Efficient and convenient I/O for large PDE simulations"""
@@ -31,8 +32,8 @@ class Simulationio(Package):
              'MPI_DIR=%s' % spec['mpi'].prefix,
              'PYTHON_DIR=%s' % spec['python'].prefix)
 
-        # Test
-        make('test')
+        # # Test
+        # make('check')
 
         # Install
         shutil.rmtree(join_path(prefix, 'bin'), ignore_errors=True)
@@ -41,12 +42,19 @@ class Simulationio(Package):
         os.mkdir(join_path(prefix, 'bin'))
         os.mkdir(join_path(prefix, 'include'))
         os.mkdir(join_path(prefix, 'lib'))
-        for binfile in ['benchmark', 'convert-carpet-output', 'copy', 'list',
-                        'example', 'test_RegionCalculus', 'test_SimulationIO']:
+        for binfile in ['benchmark', 'copy', 'example', 'list', 'merge',
+                        'convert-carpet-output',
+                        'test_RegionCalculus', 'test_SimulationIO']:
             shutil.copy(binfile, join_path(prefix, 'bin'))
         for incfile in glob.iglob('*.hpp'):
             shutil.copy(incfile, join_path(prefix, 'include'))
-        for libfile in ['_H5.so', '_RegionCalculus.so', '_SimulationIO.so']:
+        for libfile in glob.iglob('*.a'):
+            shutil.copy(libfile, join_path(prefix, 'lib'))
+        for libfile in glob.iglob('*.dylib'):
+            shutil.copy(libfile, join_path(prefix, 'lib'))
+        for libfile in glob.iglob('*.so'):
             shutil.copy(libfile, join_path(prefix, 'lib'))
         for pyfile in ['H5.py', 'RegionCalculus.py', 'SimulationIO.py']:
             shutil.copy(pyfile, join_path(prefix, 'lib'))
+        if sys.platform == 'darwin':
+            fix_darwin_install_name(prefix.lib)
