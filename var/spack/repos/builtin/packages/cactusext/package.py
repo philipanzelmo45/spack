@@ -71,7 +71,7 @@ class Cactusext(Package):
     # TODO: Remove this once the latest HDF5 version is again the default
     deps["hdf5"].append("@1.10.0-patch1")
     # TODO: Remove this once Spack chooses the latest 2.7 version by default
-    deps["python"].append("@2.7.11")
+    deps["python"].append("@2.7.12")
 
     # Compilers
     cactusext_compiler = "gcc@6.1.0-spack"
