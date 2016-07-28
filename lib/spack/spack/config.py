@@ -257,7 +257,13 @@ section_schemas = {
                             'paths': {
                                 'type' : 'object',
                                 'default' : {},
-                            }
+                             },
+                            'variants': {
+                                'oneOf' : [
+                                    { 'type' : 'string' },
+                                    { 'type' : 'array',
+                                      'items' : { 'type' : 'string' } },
+                                    ], },
                         },},},},},},
 
     'modules': {
@@ -497,8 +503,15 @@ class ConfigScope(object):
         """Empty cached config information."""
         self.sections = {}
 
+"""Default configuration scope is the lowest-level scope. These are
+   versioned with Spack and can be overridden by sites or users."""
+ConfigScope('defaults', os.path.join(spack.etc_path, 'spack', 'defaults'))
 
-ConfigScope('site', os.path.join(spack.etc_path, 'spack')),
+"""Site configuration is per spack instance, for sites or projects.
+   No site-level configs should be checked into spack by default."""
+ConfigScope('site', os.path.join(spack.etc_path, 'spack'))
+
+"""User configuration can override both spack defaults and site config."""
 ConfigScope('user', os.path.expanduser('~/.spack'))
 
 

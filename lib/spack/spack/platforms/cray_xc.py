@@ -1,8 +1,11 @@
 import os
+import spack
 from spack.architecture import Platform, Target
 from spack.operating_systems.linux_distro import LinuxDistro
 from spack.operating_systems.cnl import Cnl
 from spack.util.executable import which
+from llnl.util.filesystem import join_path
+
 
 class CrayXc(Platform):
     priority    = 20
@@ -35,7 +38,7 @@ class CrayXc(Platform):
         self.add_target('ivybridge',
                         Target('ivybridge', 'craype-ivybridge'))
         self.add_target('haswell',
-                        Target('haswell','craype-haswell'))
+                        Target('haswell', 'craype-haswell'))
 
         # Front end of the cray platform is a linux distro.
         linux_dist = LinuxDistro()
@@ -44,11 +47,26 @@ class CrayXc(Platform):
         self.add_operating_system('CNL10', Cnl())
 
     @classmethod
+    def setup_platform_environment(self, pkg, env):
+        """ Change the linker to default dynamic to be more
+            similar to linux/standard linker behavior
+        """
+        env.set('CRAYPE_LINK_TYPE', 'dynamic')
+        cray_wrapper_names = join_path(spack.build_env_path, 'cray')
+        if os.path.isdir(cray_wrapper_names):
+            env.prepend_path('PATH', cray_wrapper_names)
+            env.prepend_path('SPACK_ENV_PATHS', cray_wrapper_names)
+
+    @classmethod
     def detect(self):
-        if os.path.exists('/cray_home'):
-            cc_verbose = which('cc')
-            cc_verbose.add_default_arg('-craype-verbose')
-            text = cc_verbose(output=str, error=str, ignore_errors=True).split()
+        try:
+            cc_verbose = which('ftn')
+            text = cc_verbose('-craype-verbose',
+                              output=str, error=str,
+                              ignore_errors=True).split()
             if '-D__CRAYXC' in text:
                 return True
-        return False
+            else:
+                return False
+        except:
+            return False
