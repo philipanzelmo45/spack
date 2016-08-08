@@ -34,6 +34,8 @@ class Libiconv(Package):
 
     version('1.14', 'e34509b1623cec449dfeb73d7ce9c6c6')
 
+    patch("gets.patch")
+
     def install(self, spec, prefix):
         configure('--prefix={0}'.format(prefix),
                   '--enable-extra-encodings')
