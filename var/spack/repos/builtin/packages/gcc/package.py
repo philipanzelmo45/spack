@@ -55,6 +55,7 @@ class Gcc(Package):
         filter_file(r"'@.*@'", "'@[[:alnum:]]*@'", 'libjava/configure',
                     string=True)
 
+        # TODO: java requires zip -- add this as dependency
         enabled_languages = set(('c', 'c++', 'fortran', 'java', 'objc'))
 
         if spec.satisfies("@4.7.1:") and sys.platform != 'darwin':
