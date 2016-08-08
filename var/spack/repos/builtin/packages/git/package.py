@@ -52,6 +52,7 @@ class Git(Package):
     depends_on("curl")
     depends_on("expat")
     depends_on("gettext")
+    depends_on("libiconv")
     depends_on("zlib")
     depends_on("pcre")
     depends_on("perl")
@@ -60,6 +61,7 @@ class Git(Package):
         env['LDFLAGS'] = "-L%s" % spec['gettext'].prefix.lib + " -lintl"
         configure_args = [
             "--prefix=%s" % prefix,
+            "--with-iconv=%s" % spec['libiconv'].prefix,
             "--with-libpcre=%s" % spec['pcre'].prefix,
             "--with-openssl=%s" % spec['openssl'].prefix,
             "--with-zlib=%s" % spec['zlib'].prefix,
