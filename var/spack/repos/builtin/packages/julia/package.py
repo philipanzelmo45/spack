@@ -129,8 +129,8 @@ class Julia(Package):
             "prefix=%s" % prefix]
         if "+cxx" in spec:
             if not ("@master" in spec):
-                raise InstallError\
-                    ("Variant +cxx requires the @master version of Julia")
+                raise InstallError(
+                    "Variant +cxx requires the @master version of Julia")
             options += [
                 "BUILD_LLVM_CLANG=1",
                 "LLVM_ASSERTIONS=1",
