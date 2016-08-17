@@ -20,6 +20,7 @@ class Cactusext(Package):
     variant("funhpc", default=False, description="Enable FunHPC")
     variant("julia", default=False, description="Enable Julia")
     variant("llvm", default=False, description="Enable LLVM")
+    # variant("scalasca", default=False, description="Enable Scalasca")
     variant("simulationio", default=False, description="Enable SimulationIO")
 
     deps = {}
@@ -40,6 +41,9 @@ class Cactusext(Package):
     deps["openssl"] = []
     deps["papi"] = []
     deps["petsc"] = ["+boost", "+hdf5", "+mpi"]
+    # deps["scalasca"] = []   # depends on scorep
+    # deps["scorep"] = []   # requires a case sensitive file system
+    # deps["tau"] = []   # ["+scorep"]
     deps["zlib"] = []
     # TODO: Add CUDA
 
@@ -95,6 +99,9 @@ class Cactusext(Package):
     deps["openssl"].append("%"+cactusext_compiler)
     deps["papi"].append("%"+cactusext_compiler)
     deps["petsc"].append("%"+cactusext_compiler)
+    # deps["scalasca"].append("%"+cactusext_compiler)
+    # deps["scorep"].append("%"+cactusext_compiler)
+    # deps["tau"].append("%"+cactusext_compiler)
     deps["zlib"].append("%"+cactusext_compiler)
 
     deps["openblas"].append("%"+cactusext_compiler)
