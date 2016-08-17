@@ -65,6 +65,7 @@ class Julia(Package):
     # Combined build-time and run-time dependencies:
     depends_on("binutils", when='+binutils')
     depends_on("cmake @2.8:")
+    depends_on("curl")
     depends_on("git")
     depends_on("openssl")
     depends_on("python @2.7:2.999")
@@ -122,6 +123,7 @@ class Julia(Package):
             # "CXX=c++",
             # "FC=fc",
             # "USE_SYSTEM_ARPACK=1",
+            "override USE_SYSTEM_CURL=1",
             # "USE_SYSTEM_FFTW=1",
             # "USE_SYSTEM_GMP=1",
             # "USE_SYSTEM_MPFR=1",
