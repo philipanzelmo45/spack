@@ -401,10 +401,11 @@ the ``url`` declaration.  For example:
    :linenos:
 
    class Foo(Package):
+       version('8.2.1', '4136d7b4c04df68b686570afa26988ac')
+       ...
        def url_for_version(self, version):
            return 'http://example.com/version_%s/foo-%s.tar.gz' \
                % (version, version)
-       version('8.2.1', '4136d7b4c04df68b686570afa26988ac')
        ...
 
 If a URL cannot be derived systematically, you can add an explicit URL
@@ -433,7 +434,7 @@ executables and other custom archive types), you can add
 .. code-block:: python
 
    version('8.2.1', '4136d7b4c04df68b686570afa26988ac',
-           url='http://example.com/foo-8.2.1-special-version.tar.gz', 'expand=False')
+           url='http://example.com/foo-8.2.1-special-version.tar.gz', expand=False)
 
 When ``expand`` is set to ``False``, Spack sets the current working
 directory to the directory containing the downloaded archive before it
@@ -757,6 +758,26 @@ Fetching a revision
 
 Subversion branches are handled as part of the directory structure, so
 you can check out a branch or tag by changing the ``url``.
+
+Expanding additional resources in the source tree
+-------------------------------------------------
+
+Some packages (most notably compilers) provide optional features if additional
+resources are expanded within their source tree before building. In Spack it is
+possible to describe such a need with the ``resource`` directive :
+
+  .. code-block:: python
+
+     resource(
+        name='cargo',
+        git='https://github.com/rust-lang/cargo.git',
+        tag='0.10.0',
+        destination='cargo'
+     )
+
+Based on the keywords present among the arguments the appropriate ``FetchStrategy``
+will be used for the resource. The keyword ``destination`` is relative to the source
+root of the package and should point to where the resource is to be expanded.
 
 Automatic caching of files fetched during installation
 ------------------------------------------------------
