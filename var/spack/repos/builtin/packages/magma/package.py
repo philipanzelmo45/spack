@@ -36,17 +36,17 @@ class Magma(Package):
     homepage = "http://icl.cs.utk.edu/magma/index.html"
     url      = "http://icl.cs.utk.edu/projectsfiles/magma/downloads/magma-2.1.0.tar.gz"
 
-    version('2.1.0', '2c4ac834e38e8bb281a7ca4751df62a6')
-    version('2.0.2', '2604dd092df4ee3d790e9e979e184993')
-    version('2.0.1', '6732465e13d88419a77cb5f8ccecd1fb')
-    version('2.0.0', '91339efc93ccb2be630da7690a4f751b')
-    version('1.7.0', '482b24d3aff54a44791cf41dd1473939')
+    version("2.1.0", "2c4ac834e38e8bb281a7ca4751df62a6")
+    version("2.0.2", "2604dd092df4ee3d790e9e979e184993")
+    version("2.0.1", "6732465e13d88419a77cb5f8ccecd1fb")
+    version("2.0.0", "91339efc93ccb2be630da7690a4f751b")
+    version("1.7.0", "482b24d3aff54a44791cf41dd1473939")
 
-    depends_on('cmake', type='build')
+    depends_on("cmake", type="build")
 
     def install(self, spec, prefix):
-        with working_dir('spack-build', create=True):
-            cmake('..', *std_cmake_args)
+        with working_dir("spack-build", create=True):
+            cmake("..", *std_cmake_args)
 
             make()
-            make('install')
+            make("install")
