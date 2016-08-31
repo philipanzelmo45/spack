@@ -42,11 +42,26 @@ class Magma(Package):
     version("2.0.0", "91339efc93ccb2be630da7690a4f751b")
     version("1.7.0", "482b24d3aff54a44791cf41dd1473939")
 
-    depends_on("cmake", type="build")
+    # patch("cuda.patch")
+
+    # variant("cuda", default=False, description="Enable CUDA support")
+    variant("fortran", default=True, description="Enable Fortran support")
+
+    depends_on("blas")
+    depends_on("cmake @2.8.6:", type="build")
+    depends_on("cuda @5.5:") #  when="+cuda"
+    depends_on("lapack")
+
+    # provides("blas")
+    # provides("lapack")
 
     def install(self, spec, prefix):
         with working_dir("spack-build", create=True):
-            cmake("..", *std_cmake_args)
+            cmake("..",
+                  # ("-DCMAKE_DISABLE_FIND_PACKAGE_CUDA=%s" %
+                  #  ("on" if "+cuda" not in spec else "off")),
+                  "-DUSE_FORTRAN=%s" % ("on" if "+fortran" in spec else "off"),
+                  *std_cmake_args)
 
             make()
             make("install")
