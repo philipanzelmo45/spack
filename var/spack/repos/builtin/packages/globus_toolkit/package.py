@@ -25,33 +25,16 @@
 from spack import *
 
 
-class Imagemagick(Package):
-    """ImageMagick is a software suite to create, edit, compose,
-    or convert bitmap images."""
+class GlobusToolkit(Package):
+    """The Globus Toolkit is an open source software toolkit used for building
+       grids"""
 
-    homepage = "http://www.imagemagick.org"
-    url = "https://github.com/ImageMagick/ImageMagick/archive/7.0.2-7.tar.gz"
+    homepage = "http://toolkit.globus.org"
+    url      = "http://toolkit.globus.org/ftppub/gt6/installers/src/globus_toolkit-6.0.1470089956.tar.gz"
 
-    version('7.0.2-7', 'c59cdc8df50e481b2bd1afe09ac24c08')
-    version('7.0.2-6', 'aa5689129c39a5146a3212bf5f26d478')
-
-    depends_on('jpeg')
-    depends_on('pango')
-    depends_on('libtool', type='build')
-    depends_on('libpng')
-    depends_on('freetype')
-    depends_on('fontconfig')
-    depends_on('libtiff')
-    depends_on('ghostscript')
-    depends_on('ghostscript-fonts')
-
-    def url_for_version(self, version):
-        return "https://github.com/ImageMagick/ImageMagick/archive/{0}.tar.gz".format(version)
+    version('6.0.1470089956', 'b77fe3cc5a5844df995688b0e630d077')
 
     def install(self, spec, prefix):
-        gs_font_dir = join_path(spec['ghostscript-fonts'].prefix.share, "font")
-        configure('--prefix={0}'.format(prefix),
-                  '--with-gs-font-dir={0}'.format(gs_font_dir))
+        configure("--prefix=%s" % prefix)
         make()
-        make('check')
         make('install')

@@ -25,33 +25,20 @@
 from spack import *
 
 
-class Imagemagick(Package):
-    """ImageMagick is a software suite to create, edit, compose,
-    or convert bitmap images."""
+class Itstool(Package):
+    """ITS Tool allows you to translate your XML documents with PO files, using
+       rules from the W3C Internationalization Tag Set (ITS) to determine what
+       to translate and how to separate it into PO file messages."""
 
-    homepage = "http://www.imagemagick.org"
-    url = "https://github.com/ImageMagick/ImageMagick/archive/7.0.2-7.tar.gz"
+    homepage = "http://itstool.org/"
+    url      = "http://files.itstool.org/itstool/itstool-2.0.2.tar.bz2"
 
-    version('7.0.2-7', 'c59cdc8df50e481b2bd1afe09ac24c08')
-    version('7.0.2-6', 'aa5689129c39a5146a3212bf5f26d478')
-
-    depends_on('jpeg')
-    depends_on('pango')
-    depends_on('libtool', type='build')
-    depends_on('libpng')
-    depends_on('freetype')
-    depends_on('fontconfig')
-    depends_on('libtiff')
-    depends_on('ghostscript')
-    depends_on('ghostscript-fonts')
-
-    def url_for_version(self, version):
-        return "https://github.com/ImageMagick/ImageMagick/archive/{0}.tar.gz".format(version)
+    version('2.0.2', 'd472d877a7bc49899a73d442085b2f93')
+    version('2.0.1', '40935cfb08228488bd45575e5f001a34')
+    version('2.0.0', 'd8c702c3e8961db83d04182c2aa4730b')
+    version('1.2.0', 'c0925f6869e33af8e7fe56848c129152')
 
     def install(self, spec, prefix):
-        gs_font_dir = join_path(spec['ghostscript-fonts'].prefix.share, "font")
-        configure('--prefix={0}'.format(prefix),
-                  '--with-gs-font-dir={0}'.format(gs_font_dir))
+        configure("--prefix=%s" % prefix)
         make()
-        make('check')
         make('install')
