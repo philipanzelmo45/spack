@@ -78,16 +78,16 @@ class Cactusext(Package):
     deps["python"].append("@2.7.12")
 
     # Compilers
-    cactusext_compiler = "gcc@6.1.0-spack"
+    cactusext_compiler = "gcc@6.2.0-spack"
     git_compiler = cactusext_compiler
     if sys.platform == "darwin":
-        git_compiler = "clang@7.3.0-apple"
+        git_compiler = "clang@8.0.0-apple"
     jemalloc_compiler = cactusext_compiler
     if sys.platform == "darwin":
-        jemalloc_compiler = "clang@7.3.0-apple"
+        jemalloc_compiler = "clang@8.0.0-apple"
     python_compiler = cactusext_compiler
     if sys.platform == "darwin":
-        python_compiler = "clang@7.3.0-apple"
+        python_compiler = "clang@8.0.0-apple"
 
     deps["fftw"].append("%"+cactusext_compiler)
     deps["gsl"].append("%"+cactusext_compiler)
