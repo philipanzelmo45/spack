@@ -24,7 +24,6 @@
 ##############################################################################
 
 import os
-import sys
 import spack
 import spack.spec
 from spack.spec import CompilerSpec
@@ -53,16 +52,12 @@ class ABI(object):
         rungcc = None
         libname = None
         output = None
-        if sys.platform == "darwin":
-            suffix = "dylib"
-        else:
-            suffix = "so"
         if compiler.cxx:
             rungcc = Executable(compiler.cxx)
-            libname = "libstdc++." + suffix
+            libname = "libstdc++." + dso_suffix
         elif compiler.cc:
             rungcc = Executable(compiler.cc)
-            libname = "libgcc_s." + suffix
+            libname = "libgcc_s." + dso_suffix
         else:
             return None
         try:
