@@ -27,7 +27,7 @@ class Simulationio(Package):
 
     def install(self, spec, prefix):
         # Build
-        make('CXX=c++',
+        make('CXX=%s' % spec['mpi'].mpicxx,
              'HDF5_DIR=%s' % spec['hdf5'].prefix,
              'MPI_DIR=%s' % spec['mpi'].prefix,
              'PYTHON_DIR=%s' % spec['python'].prefix)
