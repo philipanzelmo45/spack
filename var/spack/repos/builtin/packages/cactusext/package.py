@@ -69,7 +69,6 @@ class Cactusext(Package):
     deps["simulationio"] = []
 
     whens["jemalloc"] = ["+funhpc"]
-    whens["julia"] = ["+julia"]
 
     # Versions
     # TODO: Remove this once the latest HDF5 version is again the default
