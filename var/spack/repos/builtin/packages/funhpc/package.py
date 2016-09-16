@@ -19,30 +19,31 @@ class Funhpc(Package):
 
     def install(self, spec, prefix):
         # Build
-        make('SIMFACTORY_GCC_DIR=1',
-             'CXX=c++',
-             'MPICXX=%s' % join_path(spec['mpi'].prefix.bin, 'mpicxx'),
+        make('CXX=c++',
+             'MPICXX=%s' % spec['mpi'].mpicxx,
              'MPIRUN=%s' % join_path(spec['mpi'].prefix.bin, 'mpirun'),
-             'SIMFACTORY_CEREAL_DIR=%s' % spec['cereal'].prefix,
-             'SIMFACTORY_CEREAL_CXXFLAGS=-I%s' % spec['cereal'].prefix.include,
-             'SIMFACTORY_CEREAL_LDFLAGS=',
-             'SIMFACTORY_CEREAL_LIBS=',
-             'SIMFACTORY_HWLOC_DIR=%s' % spec['hwloc'].prefix,
-             'SIMFACTORY_HWLOC_CXXFLAGS=-I%s' % spec['hwloc'].prefix.include,
-             'SIMFACTORY_HWLOC_LDFLAGS=-L%s' % spec['hwloc'].prefix.lib,
-             'SIMFACTORY_HWLOC_LIBS=-lhwloc',
-             'SIMFACTORY_JEMALLOC_DIR=%s' % spec['jemalloc'].prefix,
-             'SIMFACTORY_JEMALLOC_CXXFLAGS=-I%s' % spec['jemalloc'].prefix.include,
-             'SIMFACTORY_JEMALLOC_LDFLAGS=-L%s' % spec['jemalloc'].prefix.lib,
-             'SIMFACTORY_JEMALLOC_LIBS=-ljemalloc',
-             'SIMFACTORY_QTHREADS_DIR=%s' % spec['qthreads'].prefix,
-             'SIMFACTORY_QTHREADS_CXXFLAGS=-I%s' % spec['qthreads'].prefix.include,
-             'SIMFACTORY_QTHREADS_LDFLAGS=-L%s' % spec['qthreads'].prefix.lib,
-             'SIMFACTORY_QTHREADS_LIBS=-lqthread',
+             'CEREAL_DIR=%s' % spec['cereal'].prefix,
+             # 'CEREAL_CXXFLAGS=-I%s' % spec['cereal'].prefix.include,
+             # 'CEREAL_LDFLAGS=',
+             # 'CEREAL_LIBS=',
+             'HWLOC_DIR=%s' % spec['hwloc'].prefix,
+             # 'HWLOC_CXXFLAGS=-I%s' % spec['hwloc'].prefix.include,
+             # 'HWLOC_LDFLAGS=-L%s' % spec['hwloc'].prefix.lib,
+             # 'HWLOC_LIBS=-lhwloc',
+             'JEMALLOC_DIR=%s' % spec['jemalloc'].prefix,
+             # 'JEMALLOC_CXXFLAGS=-I%s' % spec['jemalloc'].prefix.include,
+             # 'JEMALLOC_LDFLAGS=-L%s' % spec['jemalloc'].prefix.lib,
+             # 'JEMALLOC_LIBS=-ljemalloc',
+             'QTHREADS_DIR=%s' % spec['qthreads'].prefix,
+             # 'QTHREADS_CXXFLAGS=-I%s' % spec['qthreads'].prefix.include,
+             # 'QTHREADS_LDFLAGS=-L%s' % spec['qthreads'].prefix.lib,
+             # 'QTHREADS_LIBS=-lqthread',
              'lib',
              # The selftests don't build on Comet (memory ulimit too tight?)
              # 'selftest', 'selftest-funhpc',
-             'benchmark', 'benchmark2', 'fibonacci', 'hello', 'pingpong')
+             'benchmark', 'benchmark2',  
+             'fibonacci', 'hello', 'pingpong',
+        )
 
         # Install
         shutil.rmtree(join_path(prefix, 'bin'), ignore_errors=True)
@@ -52,8 +53,7 @@ class Funhpc(Package):
         os.mkdir(join_path(prefix, 'include'))
         os.mkdir(join_path(prefix, 'lib'))
         for binfile in [# 'selftest', 'selftest-funhpc',
-                        'benchmark', 'benchmark2', 'fibonacci', 'hello',
-                        'pingpong']:
+                'benchmark', 'benchmark2', 'fibonacci', 'hello', 'pingpong']:
             shutil.copy(binfile, join_path(prefix, 'bin'))
         for subdir in ['adt', 'cxx', 'fun', 'funhpc', 'qthread']:
             os.mkdir(join_path(prefix, 'include', subdir))
