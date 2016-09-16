@@ -31,12 +31,16 @@ import sys
 class Julia(Package):
     """The Julia Language: A fresh approach to technical computing"""
     homepage = "http://julialang.org"
-    url      = "https://github.com/JuliaLang/julia/releases/download/v0.4.3/julia-0.4.3-full.tar.gz"
+    url      = ("https://github.com/JuliaLang/julia/releases/download/"
+                "v0.4.3/julia-0.4.3-full.tar.gz")
 
     version('master',
             git='https://github.com/JuliaLang/julia.git', branch='master')
     version('release-0.5',
             git='https://github.com/JuliaLang/julia.git', branch='release-0.5')
+    version('0.5-rc4', '3d2ebff4f90709dcbc02fca5012aa8fc',
+            url=('https://github.com/JuliaLang/julia/releases/download/'
+                 'v0.5.0-rc4/julia-0.5.0-rc4-full.tar.gz'))
     version('release-0.4',
             git='https://github.com/JuliaLang/julia.git', branch='release-0.4')
     version('0.4.6', 'd88db18c579049c23ab8ef427ccedf5d', preferred=True)
@@ -70,7 +74,7 @@ class Julia(Package):
     depends_on("curl")
     depends_on("git")           # I think Julia @0.5: doesn't use git any more
     depends_on("openssl")
-    depends_on("python @2.7:2.999")
+    depends_on("python @2.7.0:2.999")
 
     # Run-time dependencies:
     # depends_on("arpack")
