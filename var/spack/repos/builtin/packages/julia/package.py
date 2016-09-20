@@ -38,13 +38,7 @@ class Julia(Package):
             git='https://github.com/JuliaLang/julia.git', branch='master')
     version('release-0.5',
             git='https://github.com/JuliaLang/julia.git', branch='release-0.5')
-<<<<<<< HEAD
-    version('0.5-rc4', '3d2ebff4f90709dcbc02fca5012aa8fc',
-            url=('https://github.com/JuliaLang/julia/releases/download/'
-                 'v0.5.0-rc4/julia-0.5.0-rc4-full.tar.gz'))
-=======
     version('0.5.0', 'b61385671ba74767ab452363c43131fb', preferred=True)
->>>>>>> develop
     version('release-0.4',
             git='https://github.com/JuliaLang/julia.git', branch='release-0.4')
     version('0.4.7', '75a7a7dd882b7840829d8f165e9b9078')
