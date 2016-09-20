@@ -44,6 +44,7 @@ class Cactusext(Package):
     # deps["scalasca"] = []   # depends on scorep
     # deps["scorep"] = []   # requires a case sensitive file system
     # deps["tau"] = []   # ["+scorep"]
+    deps["tmux"] = []
     deps["zlib"] = []
     # TODO: Add CUDA
 
