@@ -25,21 +25,21 @@
 from spack import *
 
 
-class Pixman(Package):
-    """The Pixman package contains a library that provides low-level
-       pixel manipulation features such as image compositing and
-       trapezoid rasterization."""
-    homepage = "http://www.pixman.org"
-    url      = "http://cairographics.org/releases/pixman-0.32.6.tar.gz"
+class Bamtools(Package):
+    """C++ API & command-line toolkit for working with BAM data."""
 
-    version('0.32.6', '3a30859719a41bd0f5cccffbfefdd4c2')
+    homepage = "https://github.com/pezmaster31/bamtools"
+    url      = "https://github.com/pezmaster31/bamtools/archive/v2.4.0.tar.gz"
 
-    depends_on("pkg-config", type="build")
-    depends_on("libpng")
+    version('2.4.0', '6139d00c1b1fe88fe15d094d8a74d8b9')
+    version('2.3.0', 'd327df4ba037d6eb8beef65d7da75ebc')
+    version('2.2.3', '6eccd3e45e4ba12a68daa3298998e76d')
+
+    depends_on('cmake', type='build')
 
     def install(self, spec, prefix):
-        configure("--prefix=%s" % prefix,
-                  "--disable-mmx",
-                  "--disable-gtk")
-        make()
-        make("install")
+        with working_dir('spack-build', create=True):
+            cmake('..', *std_cmake_args)
+
+            make()
+            make('install')
