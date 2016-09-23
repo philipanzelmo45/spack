@@ -69,6 +69,7 @@ class Cactusext(Package):
     deps["python"] = []
     deps["simulationio"] = []
 
+    whens["git"] = ["+julia"]
     whens["jemalloc"] = ["+funhpc"]
 
     # Versions
