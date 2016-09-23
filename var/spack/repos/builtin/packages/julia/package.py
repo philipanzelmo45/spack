@@ -71,7 +71,8 @@ class Julia(Package):
     depends_on("binutils", when='+binutils')
     depends_on("cmake @2.8:")
     depends_on("curl")
-    depends_on("git")           # I think Julia @0.5: doesn't use git any more
+    depends_on("git", when='@:0.4')
+    depends_on("git", when='@release-0.4')
     depends_on("openssl")
     depends_on("python @2.7.0:2.999")
 
