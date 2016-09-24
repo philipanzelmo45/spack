@@ -22,28 +22,31 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+
 from spack import *
 
 
-class Icu4c(Package):
-    """ICU is a mature, widely used set of C/C++ and Java libraries providing
-    Unicode and Globalization support for software applications. ICU4C is the
-    C/C++ interface."""
+class Xrootd(Package):
+    """The XROOTD project aims at giving high performance, scalable fault
+       tolerant access to data repositories of many kinds."""
+    homepage = "http://xrootd.org"
+    url      = "http://xrootd.org/download/v4.3.0/xrootd-4.3.0.tar.gz"
 
-    homepage = "http://site.icu-project.org/"
-    url      = "http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz"
+    version('4.3.0', '39c2fab9f632f35e12ff607ccaf9e16c')
 
-    version('57.1', '976734806026a4ef8bdd17937c8898b9')
-
-    def url_for_version(self, version):
-        base_url = "http://download.icu-project.org/files/icu4c"
-        return "{0}/{1}/icu4c-{2}-src.tgz".format(
-            base_url, version, version.underscored)
+    depends_on('cmake', type='build')
 
     def install(self, spec, prefix):
-        with working_dir('source'):
-            configure('--prefix={0}'.format(prefix))
+        options = []
+        options.extend(std_cmake_args)
 
+        build_directory = join_path(self.stage.path, 'spack-build')
+        source_directory = self.stage.source_path
+
+        if '+debug' in spec:
+            options.append('-DCMAKE_BUILD_TYPE:STRING=Debug')
+
+        with working_dir(build_directory, create=True):
+            cmake(source_directory, *options)
             make()
-            make('check')
-            make('install')
+            make("install")

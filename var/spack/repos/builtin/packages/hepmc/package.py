@@ -22,28 +22,34 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+
 from spack import *
 
 
-class Icu4c(Package):
-    """ICU is a mature, widely used set of C/C++ and Java libraries providing
-    Unicode and Globalization support for software applications. ICU4C is the
-    C/C++ interface."""
+class Hepmc(Package):
+    """The HepMC package is an object oriented, C++ event record for
+       High Energy Physics Monte Carlo generators and simulation."""
 
-    homepage = "http://site.icu-project.org/"
-    url      = "http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz"
+    homepage = "http://hepmc.web.cern.ch/hepmc/"
+    url      = "http://hepmc.web.cern.ch/hepmc/releases/hepmc2.06.09.tgz"
 
-    version('57.1', '976734806026a4ef8bdd17937c8898b9')
+    version('2.06.09', 'c47627ced4255b40e731b8666848b087')
+    version('2.06.08', 'a2e889114cafc4f60742029d69abd907')
+    version('2.06.07', '11d7035dccb0650b331f51520c6172e7')
+    version('2.06.06', '102e5503537a3ecd6ea6f466aa5bc4ae')
+    version('2.06.05', '2a4a2a945adf26474b8bdccf4f881d9c')
 
-    def url_for_version(self, version):
-        base_url = "http://download.icu-project.org/files/icu4c"
-        return "{0}/{1}/icu4c-{2}-src.tgz".format(
-            base_url, version, version.underscored)
+    depends_on("cmake", type='build')
 
     def install(self, spec, prefix):
-        with working_dir('source'):
-            configure('--prefix={0}'.format(prefix))
+        build_directory = join_path(self.stage.path, 'spack-build')
+        source_directory = self.stage.source_path
+        options = [source_directory]
+        options.append('-Dmomentum:STRING=GEV')
+        options.append('-Dlength:STRING=MM')
+        options.extend(std_cmake_args)
 
+        with working_dir(build_directory, create=True):
+            cmake(*options)
             make()
-            make('check')
             make('install')

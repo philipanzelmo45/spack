@@ -25,25 +25,18 @@
 from spack import *
 
 
-class Icu4c(Package):
-    """ICU is a mature, widely used set of C/C++ and Java libraries providing
-    Unicode and Globalization support for software applications. ICU4C is the
-    C/C++ interface."""
+class Gmake(Package):
+    """GNU Make."""
 
-    homepage = "http://site.icu-project.org/"
-    url      = "http://download.icu-project.org/files/icu4c/57.1/icu4c-57_1-src.tgz"
+    homepage = "http://gnu.org/gnu/make"
+    url      = "ftp://ftp.gnu.org/gnu/make/make-4.0.tar.gz"
 
-    version('57.1', '976734806026a4ef8bdd17937c8898b9')
-
-    def url_for_version(self, version):
-        base_url = "http://download.icu-project.org/files/icu4c"
-        return "{0}/{1}/icu4c-{2}-src.tgz".format(
-            base_url, version, version.underscored)
+    version('4.0', 'b5e558f981326d9ca1bfdb841640721a')
 
     def install(self, spec, prefix):
-        with working_dir('source'):
-            configure('--prefix={0}'.format(prefix))
+        configure('--prefix={0}'.format(prefix))
 
-            make()
-            make('check')
-            make('install')
+        make()
+        make('install')
+        with working_dir(prefix.bin):
+            symlink('make', 'gmake')
