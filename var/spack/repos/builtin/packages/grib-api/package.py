@@ -25,22 +25,26 @@
 from spack import *
 
 
-class PyPil(Package):
-    """The Python Imaging Library (PIL) adds image processing capabilities
-    to your Python interpreter. This library supports many file formats,
-    and provides powerful image processing and graphics capabilities."""
+class GribApi(Package):
+    """The ECMWF GRIB API is an application program interface accessible from C,
+       FORTRAN and Python programs developed for encoding and decoding WMO
+       FM-92 GRIB edition 1 and edition 2 messages."""
 
-    homepage = "http://www.pythonware.com/products/pil/"
-    url      = "http://effbot.org/media/downloads/Imaging-1.1.7.tar.gz"
+    homepage = "https://software.ecmwf.int/wiki/display/GRIB/Home"
+    url      = "https://software.ecmwf.int/wiki/download/attachments/3473437/grib_api-1.17.0-Source.tar.gz?api=v2"
 
-    version('1.1.7', 'fc14a54e1ce02a0225be8854bfba478e')
+    version('1.17.0', 'bca7114d2c3100501a08190a146818d2')
 
-    provides('pil')
-
-    # py-pil currently only works with Python2.
-    # If you are using Python 3, try using py-pillow instead.
-    extends('python')
-    depends_on('python@1.5.2:2.8')
+    depends_on('netcdf')
+    depends_on('jasper')
 
     def install(self, spec, prefix):
-        python('setup.py', 'install', '--prefix=%s' % prefix)
+        configure_options = [
+            '--prefix={0}'.format(prefix),
+            '--with-netcdf={0}'.format(spec['netcdf'].prefix),
+            '--with-jasper={0}'.format(spec['jasper'].prefix)
+        ]
+        configure(*configure_options)
+
+        make()
+        make('install')
