@@ -25,24 +25,26 @@
 from spack import *
 
 
-class Gmp(Package):
-    """GMP is a free library for arbitrary precision arithmetic, operating
-    on signed integers, rational numbers, and floating-point numbers."""
+class Libxstream(Package):
+    '''LIBXSTREAM is a library to work with streams, events, and code regions
+    that are able to run asynchronous while preserving the usual stream
+    conditions.'''
 
-    homepage = "https://gmplib.org"
-    url      = "https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2"
+    homepage = 'https://github.com/hfp/libxstream'
+    url      = 'https://github.com/hfp/libxstream.git'
 
-    version('6.1.1',  '4c175f86e11eb32d8bf9872ca3a8e11d')
-    version('6.1.0',  '86ee6e54ebfc4a90b643a65e402c4048')
-    version('6.0.0a', 'b7ff2d88cae7f8085bd5006096eed470')
-    version('6.0.0',  '6ef5869ae735db9995619135bd856b84')
+    version('0.9.0', git='https://github.com/hfp/libxstream.git')
 
-    depends_on('m4', type='build')
+    def patch(self):
+        kwargs = {'ignore_absent': False, 'backup': True, 'string': True}
+        makefile = FileFilter('Makefile.inc')
+
+        makefile.filter('CC =',  'CC ?=',  **kwargs)
+        makefile.filter('CXX =', 'CXX ?=', **kwargs)
+        makefile.filter('FC =',  'FC ?=',  **kwargs)
 
     def install(self, spec, prefix):
-        configure('--prefix={0}'.format(prefix),
-                  '--enable-cxx')
-
         make()
-        make('check')
-        make('install')
+        install_tree('lib', prefix.lib)
+        install_tree('include', prefix.include)
+        install_tree('documentation', prefix.share + '/libxstream/doc/')
