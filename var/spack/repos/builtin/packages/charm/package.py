@@ -178,7 +178,10 @@ class Charm(Package):
                 filepath = join_path(dirpath, filename)
                 if os.path.islink(filepath):
                     tmppath = filepath+".tmp"
-                    shutil.copy2(filepath, tmppath)
-                    os.remove(filepath)
-                    os.rename(tmppath, filepath)
+                    try:
+                        shutil.copy2(filepath, tmppath)
+                        os.remove(filepath)
+                        os.rename(tmppath, filepath)
+                    except:
+                        pass
         shutil.rmtree(join_path(prefix, "tmp"))
