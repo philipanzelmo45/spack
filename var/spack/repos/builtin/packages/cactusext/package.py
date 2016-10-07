@@ -17,6 +17,7 @@ class Cactusext(Package):
     version("master",
             git="https://bitbucket.org/cactuscode/coredoc.git", branch="master")
 
+    variant("charm", default=False, description="Enable Charm++")
     variant("funhpc", default=False, description="Enable FunHPC")
     variant("julia", default=False, description="Enable Julia")
     variant("llvm", default=False, description="Enable LLVM")
@@ -48,6 +49,7 @@ class Cactusext(Package):
     deps["zlib"] = []
     # TODO: Add CUDA
 
+    whens["charm"] = ["+charm"]
     whens["funhpc"] = ["+funhpc"]
     whens["julia"] = ["+julia"]
     whens["llvm"] = ["+llvm"]
@@ -60,6 +62,7 @@ class Cactusext(Package):
     deps["openmpi"] = []
 
     # Initialize dependencies that are mentioned below
+    deps["charm"] = ["+mpi", "+papi", "+smp"]
     deps["cmake"] = []
     deps["funhpc"] = []
     deps["git"] = []
@@ -112,6 +115,7 @@ class Cactusext(Package):
     deps["openblas"].append("%"+cactusext_compiler)
     deps["openmpi"].append("%"+cactusext_compiler)
 
+    deps["charm"].append("%"+cactusext_compiler)
     deps["funhpc"].append("%"+cactusext_compiler)
     deps["julia"].append("%"+cactusext_compiler)
     deps["llvm"].append("%"+cactusext_compiler)
