@@ -169,4 +169,4 @@ class Charm(Package):
         # this wouldn't be difficult.
         build = Executable(join_path(".", "build"))
         build(target, version, *options)
-        shutil.rmtree(join_path(prefix, "tmp"))
+        # shutil.rmtree(join_path(prefix, "tmp"))
