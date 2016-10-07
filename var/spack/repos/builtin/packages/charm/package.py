@@ -171,13 +171,14 @@ class Charm(Package):
         build = Executable(join_path(".", "build"))
         build(target, version, *options)
 
-        # Charm++'s install script does not copy file, it only create
+        # Charm++'s install script does not copy files, it only creates
         # symbolic links. Fix this.
         for dirpath, dirnames, filenames in os.walk(prefix):
             for filename in filenames:
                 filepath = join_path(dirpath, filename)
                 if os.path.islink(filepath):
-                    tmppath = filepath+".tmp"
+                    tmppath = filepath + ".tmp"
+                    # Skip dangling symbolic links
                     try:
                         shutil.copy2(filepath, tmppath)
                         os.remove(filepath)
