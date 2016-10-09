@@ -62,7 +62,9 @@ class Cactusext(Package):
     deps["openmpi"] = []
 
     # Initialize dependencies that are mentioned below
-    deps["charm"] = ["-netlrts", "+mpi", "+papi", "+smp"]
+    deps["charm"] = ["-netlrts", "+mpi", "+smp"]
+    if sys.platform != "darwin":
+        deps["charm"].append("+papi")
     deps["cmake"] = []
     deps["funhpc"] = []
     deps["git"] = []
