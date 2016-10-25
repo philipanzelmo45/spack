@@ -28,10 +28,10 @@ import re
 import shutil
 
 
-class Hdf5(Package):
+class Hdf5(AutotoolsPackage):
     """HDF5 is a data model, library, and file format for storing and managing
-       data. It supports an unlimited variety of datatypes, and is designed for
-       flexible and efficient I/O and for high volume and complex data.
+    data. It supports an unlimited variety of datatypes, and is designed for
+    flexible and efficient I/O and for high volume and complex data.
     """
 
     homepage = "http://www.hdfgroup.org/HDF5/"
@@ -59,17 +59,19 @@ class Hdf5(Package):
     variant('threadsafe', default=False,
             description='Enable thread-safe capabilities')
 
-    depends_on("mpi", when='+mpi')
-    depends_on("szip", when='+szip')
-    depends_on("zlib")
+    depends_on('mpi', when='+mpi')
+    depends_on('szip', when='+szip')
+    depends_on('zlib@1.1.2:')
 
-    def validate(self, spec):
+    @AutotoolsPackage.precondition('configure')
+    def validate(self):
         """
         Checks if incompatible variants have been activated at the same time
 
         :param spec: spec of the package
         :raises RuntimeError: in case of inconsistencies
         """
+        spec = self.spec
         if '+fortran' in spec and not self.compiler.fc:
             msg = 'cannot build a fortran variant without a fortran compiler'
             raise RuntimeError(msg)
@@ -78,8 +80,8 @@ class Hdf5(Package):
             msg = 'cannot use variant +threadsafe with either +cxx or +fortran'
             raise RuntimeError(msg)
 
-    def install(self, spec, prefix):
-        self.validate(spec)
+    def configure_args(self):
+        spec = self.spec
         # Handle compilation after spec validation
         extra_args = []
 
@@ -122,16 +124,14 @@ class Hdf5(Package):
             # this is not actually a problem.
             extra_args.extend([
                 "--enable-parallel",
-                "CC=%s" % join_path(spec['mpi'].prefix.bin, "mpicc"),
+                "CC=%s" % spec['mpi'].mpicc
             ])
 
             if '+cxx' in spec:
-                extra_args.append("CXX=%s" % join_path(spec['mpi'].prefix.bin,
-                                                       "mpic++"))
+                extra_args.append("CXX=%s" % spec['mpi'].mpicxx)
 
             if '+fortran' in spec:
-                extra_args.append("FC=%s" % join_path(spec['mpi'].prefix.bin,
-                                                      "mpifort"))
+                extra_args.append("FC=%s" % spec['mpi'].mpifc)
 
         if '+szip' in spec:
             extra_args.append("--with-szlib=%s" % spec['szip'].prefix)
@@ -142,17 +142,13 @@ class Hdf5(Package):
                 '--disable-hl',
             ])
 
-        configure(
-            "--prefix=%s" % prefix,
-            "--with-zlib=%s" % spec['zlib'].prefix,
-            *extra_args)
-        make()
-        make("install")
-        self.check_install(spec)
+        return ["--with-zlib=%s" % spec['zlib'].prefix] + extra_args
 
-    def check_install(self, spec):
-        "Build and run a small program to test the installed HDF5 library"
-        print "Checking HDF5 installation..."
+    def check(self):
+        super(Hdf5, self).check()
+        # Build and run a small program to test the installed HDF5 library
+        spec = self.spec
+        print("Checking HDF5 installation...")
         checkdir = "spack-check"
         with working_dir(checkdir, create=True):
             source = r"""
@@ -174,7 +170,7 @@ HDF5 version {version} {version}
             with open("check.c", 'w') as f:
                 f.write(source)
             if '+mpi' in spec:
-                cc = which(join_path(spec['mpi'].prefix.bin, "mpicc"))
+                cc = which('%s' % spec['mpi'].mpicc)
             else:
                 cc = which('cc')
             # TODO: Automate these path and library settings
@@ -189,15 +185,15 @@ HDF5 version {version} {version}
                 output = ""
             success = output == expected
             if not success:
-                print "Produced output does not match expected output."
-                print "Expected output:"
-                print '-' * 80
-                print expected
-                print '-' * 80
-                print "Produced output:"
-                print '-' * 80
-                print output
-                print '-' * 80
+                print("Produced output does not match expected output.")
+                print("Expected output:")
+                print('-' * 80)
+                print(expected)
+                print('-' * 80)
+                print("Produced output:")
+                print('-' * 80)
+                print(output)
+                print('-' * 80)
                 raise RuntimeError("HDF5 install check failed")
         shutil.rmtree(checkdir)
 
