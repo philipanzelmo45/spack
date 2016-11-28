@@ -1,5 +1,5 @@
 ##############################################################################
-# Copyright (c) 2013-2016, Lawrence Livermore National Security, LLC.
+# Copyright (c) 2016, Lawrence Livermore National Security, LLC.
 # Produced at the Lawrence Livermore National Laboratory.
 #
 # This file is part of Spack.
@@ -25,23 +25,17 @@
 from spack import *
 
 
-class Xpyb(Package):
-    """xpyb provides a Python binding to the X Window System protocol
-    via libxcb."""
+class PyPathspec(Package):
+    """pathspec extends the test loading and running features of unittest,
+    making it easier to write, find and run tests."""
 
-    homepage = "https://xcb.freedesktop.org/"
-    url      = "https://xcb.freedesktop.org/dist/xpyb-1.3.1.tar.gz"
+    homepage = "https://pypi.python.org/pypi/pathspec"
 
-    version('1.3.1', '75d567e25517fb883a56f10b77fd2757')
+    version('0.3.4', '2a4af9bf2dee98845d583ec61a00d05d',
+        url='https://pypi.python.org/packages/14/9d/c9d790d373d6f6938d793e9c549b87ad8670b6fa7fc6176485e6ef11c1a4/pathspec-0.3.4.tar.gz')
 
     extends('python')
-
-    depends_on('libxcb@1.5:')
-
-    depends_on('xcb-proto@1.7.1:', type='build')
+    depends_on('py-setuptools', type='build')
 
     def install(self, spec, prefix):
-        configure('--prefix={0}'.format(prefix))
-
-        make()
-        make('install')
+        setup_py('install', '--prefix=%s' % prefix)

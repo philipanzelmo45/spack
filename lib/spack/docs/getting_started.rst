@@ -47,8 +47,7 @@ to your path and you're ready to go:
    $ export PATH=$SPACK_ROOT/bin:$PATH
    $ spack install libelf
 
-For a richer experience, use Spack's `shell support
-<http://software.llnl.gov/spack/basic_usage.html#environment-modules>`_:
+For a richer experience, use Spack's shell support:
 
 .. code-block:: console
 
@@ -60,7 +59,9 @@ For a richer experience, use Spack's `shell support
    $ setenv SPACK_ROOT /path/to/spack
    $ source $SPACK_ROOT/share/spack/setup-env.csh
 
-This automatically adds Spack to your ``PATH``.
+This automatically adds Spack to your ``PATH`` and allows the ``spack``
+command to :ref:`load environment modules <shell-support>` and execute
+:ref:`useful packaging commands <packaging-shell-support>`.
 
 ^^^^^^^^^^^^^^^^^
 Clean Environment
@@ -324,7 +325,7 @@ by adding the following to your ``packages.yaml`` file:
        compiler: [gcc@4.9.3]
 
 
-.. note::
+.. tip::
 
     If you are building your own compiler, some users prefer to have a
     Spack instance just for that.  For example, create a new Spack in
@@ -393,10 +394,12 @@ build your own, plus modules:
 
 #. Once the compiler is installed, you should be able to test it by
    using Spack to load the module it just created, and running simple
-   builds (eg: ``cc helloWorld.c; ./a.out``)
+   builds (eg: ``cc helloWorld.c && ./a.out``)
 
 #. Add the newly-installed compiler to ``compilers.yaml`` as shown
    above.
+
+.. _mixed-toolchains:
 
 ^^^^^^^^^^^^^^^^
 Mixed Toolchains
@@ -412,7 +415,17 @@ provides no Fortran compilers.  The user is therefore forced to use a
 mixed toolchain: XCode-provided Clang for C/C++ and GNU ``gfortran`` for
 Fortran.
 
-In the simplest case, you can just edit ``compilers.yaml``:
+#. You need to make sure that command-line tools are installed. To that
+   end run ``$ xcode-select --install``.
+
+#. Run ``$ spack compiler find`` to locate Clang.
+
+#. There are different ways to get ``gfortran`` on macOS. For example, you can
+   install GCC with Spack (``$ spack install gcc``) or with Homebrew
+   (``$ brew install gcc``).
+
+#. The only thing left to do is to edit ``~/.spack/compilers.yaml`` to provide
+   the path to ``gfortran``:
 
    .. code-block:: yaml
 
@@ -424,57 +437,10 @@ In the simplest case, you can just edit ``compilers.yaml``:
             f77: /path/to/bin/gfortran
             fc: /path/to/bin/gfortran
 
-.. note::
-
-   If you are building packages that are sensitive to the compiler's
-   name, you may also need to slightly modify a few more files so that
-   Spack uses compiler names the build system will recognize.
-
-   Following are instructions on how to hack together
-   ``clang`` and ``gfortran`` on Macintosh OS X.  A similar approach
-   should work for other mixed toolchain needs.
-
-   Better support for mixed compiler toolchains is planned in forthcoming
-   Spack versions.
-
-   #. Create a symlink inside ``clang`` environment:
-
-      .. code-block:: console
-
-         $ cd $SPACK_ROOT/lib/spack/env/clang
-         $ ln -s ../cc gfortran
-
-
-   #. Patch ``clang`` compiler file:
-
-      .. code-block:: diff
-
-         $ diff --git a/lib/spack/spack/compilers/clang.py b/lib/spack/spack/compilers/clang.py
-         index e406d86..cf8fd01 100644
-         --- a/lib/spack/spack/compilers/clang.py
-         +++ b/lib/spack/spack/compilers/clang.py
-         @@ -35,17 +35,17 @@ class Clang(Compiler):
-              cxx_names = ['clang++']
-
-              # Subclasses use possible names of Fortran 77 compiler
-         -    f77_names = []
-         +    f77_names = ['gfortran']
-
-              # Subclasses use possible names of Fortran 90 compiler
-         -    fc_names = []
-         +    fc_names = ['gfortran']
-
-              # Named wrapper links within spack.build_env_path
-              link_paths = { 'cc'  : 'clang/clang',
-                             'cxx' : 'clang/clang++',
-                             # Use default wrappers for fortran, in case provided in compilers.yaml
-         -                   'f77' : 'f77',
-         -                   'fc'  : 'f90' }
-         +                   'f77' : 'clang/gfortran',
-         +                   'fc'  : 'clang/gfortran' }
-
-              @classmethod
-              def default_version(self, comp):
+   If you used Spack to install GCC, you can get the installation prefix by
+   ``$ spack location -i gcc`` (this will only work if you have a single version
+   of GCC installed). Whereas for Homebrew, GCC is installed in
+   ``/usr/local/Cellar/gcc/x.y.z``.
 
 ^^^^^^^^^^^^^^^^^^^^^
 Compiler Verification
@@ -509,16 +475,17 @@ compilers:
    features (``spack install gcc``).
 
 #. Tell the Intel compiler how to find that desired GCC.  This may be
-   done in one of two ways: (text taken from `Intel Reference Guide
-   <https://software.intel.com/en-us/node/522750>`_):
+   done in one of two ways:
 
-   > By default, the compiler determines which version of ``gcc`` or ``g++``
-   > you have installed from the ``PATH`` environment variable.
-   >
-   > If you want use a version of ``gcc`` or ``g++`` other than the default
-   > version on your system, you need to use either the ``-gcc-name``
-   > or ``-gxx-name`` compiler option to specify the path to the version of
-   > ``gcc`` or ``g++`` that you want to use.
+      "By default, the compiler determines which version of ``gcc`` or ``g++``
+      you have installed from the ``PATH`` environment variable.
+
+      If you want use a version of ``gcc`` or ``g++`` other than the default
+      version on your system, you need to use either the ``-gcc-name``
+      or ``-gxx-name`` compiler option to specify the path to the version of
+      ``gcc`` or ``g++`` that you want to use."
+
+      -- `Intel Reference Guide <https://software.intel.com/en-us/node/522750>`_
 
 Intel compilers may therefore be configured in one of two ways with
 Spack: using modules, or using compiler flags.
@@ -555,11 +522,6 @@ configuration in ``compilers.yaml`` illustrates this technique:
 """"""""""""""""""""""""""
 Command Line Configuration
 """"""""""""""""""""""""""
-
-. warning::
-
-    As of the writing of this manual, added compilers flags are broken;
-    see `GitHub Issue <https://github.com/LLNL/spack/pull/1532>`_.
 
 One can also control which GCC is seen by the Intel compiler by adding
 flags to the ``icc`` command:
@@ -616,7 +578,7 @@ distinguishable by their names.  "Old" compilers:
 Older installations of PGI contains just the old compilers; whereas
 newer installations contain the old and the new.  The new compiler is
 considered preferable, as some packages
-(``hdf4``) will not build with the old compiler.
+(``hdf``) will not build with the old compiler.
 
 When auto-detecting a PGI compiler, there are cases where Spack will
 find the old compilers, when you really want it to find the new
@@ -641,7 +603,7 @@ Other issues:
 
 .. note::
 
-   It is believed the problem with ``hdf4`` is that everything is
+   It is believed the problem with HDF 4 is that everything is
    compiled with the ``F77`` compiler, but at some point some Fortran
    90 code slipped in there. So compilers that can handle both FORTRAN
    77 and Fortran 90 (``gfortran``, ``pgfortran``, etc) are fine.  But
@@ -653,9 +615,40 @@ Other issues:
 NAG
 ^^^
 
-At this point, the NAG compiler is `known to not
-work<https://github.com/LLNL/spack/issues/590>`.
+The Numerical Algorithms Group provides a licensed Fortran compiler. Like Clang,
+this requires you to set up a :ref:`mixed-toolchains`. It is recommended to use
+GCC for your C/C++ compilers.
 
+The NAG Fortran compilers are a bit more strict than other compilers, and many
+packages will fail to install with error messages like:
+
+.. code-block:: none
+
+   Error: mpi_comm_spawn_multiple_f90.f90: Argument 3 to MPI_COMM_SPAWN_MULTIPLE has data type DOUBLE PRECISION in reference from MPI_COMM_SPAWN_MULTIPLEN and CHARACTER in reference from MPI_COMM_SPAWN_MULTIPLEA
+
+In order to convince the NAG compiler not to be too picky about calling conventions,
+you can use ``FFLAGS=-mismatch`` and ``FCFLAGS=-mismatch``. This can be done through
+the command line:
+
+.. code-block:: console
+
+   $ spack install openmpi fflags=\"-mismatch\"
+
+Or it can be set permanently in your ``compilers.yaml``:
+
+.. code-block:: yaml
+
+   - compiler:
+    modules: []
+    operating_system: centos6
+    paths:
+      cc: /soft/spack/opt/spack/linux-x86_64/gcc-5.3.0/gcc-6.1.0-q2zosj3igepi3pjnqt74bwazmptr5gpj/bin/gcc
+      cxx: /soft/spack/opt/spack/linux-x86_64/gcc-5.3.0/gcc-6.1.0-q2zosj3igepi3pjnqt74bwazmptr5gpj/bin/g++
+      f77: /soft/spack/opt/spack/linux-x86_64/gcc-4.4.7/nag-6.1-jt3h5hwt5myezgqguhfsan52zcskqene/bin/nagfor
+      fc: /soft/spack/opt/spack/linux-x86_64/gcc-4.4.7/nag-6.1-jt3h5hwt5myezgqguhfsan52zcskqene/bin/nagfor
+    flags:
+      fflags: -mismatch
+    spec: nag@6.1
 
 ---------------
 System Packages
@@ -663,7 +656,7 @@ System Packages
 
 Once compilers are configured, one needs to determine which
 pre-installed system packages, if any, to use in builds.  This is
-configured in the file `~/.spack/packages.yaml`.  For example, to use
+configured in the file ``~/.spack/packages.yaml``.  For example, to use
 an OpenMPI installed in /opt/local, one would use:
 
 .. code-block:: yaml
@@ -730,21 +723,45 @@ there."  This is reasonable for OpenSSL, which has a stable API.
     packages:
         openssl:
             paths:
-                openssl@system: /false/path
+                openssl@system: /usr
             version: [system]
             buildable: False
 
+
+^^^^^^^^^^^^^
+BLAS / LAPACK
+^^^^^^^^^^^^^
+
+The recommended way to use system-supplied BLAS / LAPACK packages is
+to add the following to ``packages.yaml``:
+
+.. code-block:: yaml
+
+    packages:
+        netlib-lapack:
+            paths:
+                netlib-lapack@system: /usr
+            version: [system]
+            buildable: False
+        all:
+            providers:
+                blas: [netlib-lapack]
+                lapack: [netlib-lapack]
+
 .. note::
 
-   Even though OpenSSL is located in ``/usr``, We have told Spack to
-   look for it in ``/false/path``.  This prevents ``/usr`` from being
-   added to compilation paths and RPATHs, where it could cause
-   unrelated system libraries to be used instead of their Spack
-   equivalents.
+   The ``@system`` "version" means "I don't care what version it is,
+   just use what is there." Above we pretend that the system-provided
+   Blas/Lapack is ``netlib-lapack`` only because it is the only BLAS / LAPACK
+   provider which use standard names for libraries (as opposed to, for example,
+   `libopenblas.so`).
 
-   The adding of ``/usr`` to ``RPATH`` in this sitution is a known issue
-   and will be fixed in a future release.
-
+   Although we specify external package in ``/usr``, Spack is smart enough not
+   to add ``/usr/lib`` to RPATHs, where it could cause unrelated system
+   libraries to be used instead of their Spack equivalents. ``usr/bin`` will be
+   present in PATH, however it will have lower precedence compared to paths
+   from other dependencies. This ensures that binaries in Spack dependencies
+   are preferred over system binaries.
 
 ^^^
 Git
@@ -800,8 +817,8 @@ appeal to the system's package manager can fix such problems.  If not,
 the solution is have Spack install the required packages, and then
 have Spack use them.
 
-For example, if `curl` doesn't work, one could use the following steps
-to provide Spack a working `curl`:
+For example, if ``curl`` doesn't work, one could use the following steps
+to provide Spack a working ``curl``:
 
 .. code-block:: console
 
@@ -836,7 +853,7 @@ source code, and to load generated environment modules: ``curl``,
 
 As long as the user's environment is set up to successfully run these
 programs from outside of Spack, they should work inside of Spack as
-well.  They can generally be activated as in the `curl` example above;
+well.  They can generally be activated as in the ``curl`` example above;
 or some systems might already have an appropriate hand-built
 environment module that may be loaded.  Either way works.
 
@@ -881,6 +898,7 @@ your Linux distribution does not have Environment Modules, you can get it
 with Spack:
 
 #. Consider using system tcl (as long as your system has Tcl version 8.0 or later):
+
    #) Identify its location using ``which tclsh``
    #) Identify its version using ``echo 'puts $tcl_version;exit 0' | tclsh``
    #) Add to ``~/.spack/packages.yaml`` and modify as appropriate:
@@ -1116,4 +1134,4 @@ if we want to build with intel compilers, use version 16.0.0.109. We add a spec
 for each compiler type for each cray modules. This ensures that for each
 compiler on our system we can use that external module.
 
-For more on external packages check out the section :ref:`sec-external_packages`.
+For more on external packages check out the section :ref:`sec-external-packages`.

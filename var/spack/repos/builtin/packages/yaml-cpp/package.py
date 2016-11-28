@@ -22,24 +22,28 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
-"""Schema for target configuration files."""
+from spack import *
 
 
-schema = {
-    '$schema': 'http://json-schema.org/schema#',
-    'title': 'Spack target configuration file schema',
-    'type': 'object',
-    'additionalProperties': False,
-    'patternProperties': {
-        r'targets:?': {
-            'type': 'object',
-            'default': {},
-            'additionalProperties': False,
-            'patternProperties': {
-                r'\w[\w-]*': {  # target name
-                    'type': 'string',
-                },
-            },
-        },
-    },
-}
+class YamlCpp(Package):
+    """A YAML parser and emitter in C++"""
+
+    homepage = "https://github.com/jbeder/yaml-cpp"
+    url      = \
+    "https://github.com/jbeder/yaml-cpp/archive/yaml-cpp-0.5.3.tar.gz"
+
+    version('0.5.3', '4e47733d98266e46a1a73ae0a72954eb')
+
+    variant('fpic',    default=False,
+            description='Build with position independent code')
+
+    depends_on('cmake', type='build')
+
+    def install(self, spec, prefix):
+        with working_dir('spack-build', create=True):
+            args = std_cmake_args
+            if '+fpic' in spec: 
+                args += ['-DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=true']
+            cmake('..', *args)
+            make()
+            make("install")

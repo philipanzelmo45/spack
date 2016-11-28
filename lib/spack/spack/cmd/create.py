@@ -145,10 +145,10 @@ class AutotoolsGuess(DefaultGuess):
 
     body = """\
     def configure_args(self):
-       # FIXME: Add arguments other than --prefix
-       # FIXME: If not needed delete the function
-       args = []
-       return args"""
+        # FIXME: Add arguments other than --prefix
+        # FIXME: If not needed delete the function
+        args = []
+        return args"""
 
 
 class CMakeGuess(DefaultGuess):
@@ -161,11 +161,11 @@ class CMakeGuess(DefaultGuess):
 
     body = """\
     def cmake_args(self):
-       # FIXME: Add arguments other than
-       # FIXME: CMAKE_INSTALL_PREFIX and CMAKE_BUILD_TYPE
-       # FIXME: If not needed delete the function
-       args = []
-       return args"""
+        # FIXME: Add arguments other than
+        # FIXME: CMAKE_INSTALL_PREFIX and CMAKE_BUILD_TYPE
+        # FIXME: If not needed delete the function
+        args = []
+        return args"""
 
 
 class SconsGuess(DefaultGuess):
@@ -336,7 +336,7 @@ class BuildSystemGuesser(object):
         self.build_system = build_system
 
     def make_guess(self, name, url, ver_hash_tuples):
-        cls = self._choiches.get(self.build_system, DefaultGuess)
+        cls = self._choices.get(self.build_system, DefaultGuess)
         return cls(name, url, ver_hash_tuples)
 
 

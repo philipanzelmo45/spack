@@ -40,7 +40,7 @@ or refer to the full manual below.
 
 .. toctree::
    :maxdepth: 2
-   :caption: Tutorials
+   :caption: Basics
 
    features
    getting_started
@@ -52,9 +52,18 @@ or refer to the full manual below.
    :caption: Reference Manual
 
    configuration
+   config_yaml
+   build_settings
    mirrors
+   module_file_support
    package_list
    command_index
+
+.. toctree::
+   :maxdepth: 2
+   :caption: Tutorial
+
+   tutorial_sc16
 
 .. toctree::
    :maxdepth: 2
