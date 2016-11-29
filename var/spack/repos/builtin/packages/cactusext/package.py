@@ -147,23 +147,21 @@ class Cactusext(Package):
         ["^"+dep+" %"+cactusext_compiler for dep in python_deps])
 
     # Options
-    # TODO: avoid ~polly ~gold
-    # ~lldb ~internal_unwind ~polly ~libcxx ~compiler-rt ~gold
-    # deps["llvm", when="+llvm")
-    openmpi_opts = []
-    if (os.path.isfile("/usr/include/pmi.h") or
-        os.path.isfile("/usr/slurm/include/pmi.h") or
-        os.path.isfile("/usr/include/pmi2.h") or
-        os.path.isfile("/usr/slurm/include/pmi2.h")):
-        deps["openmpi"].append("+pmi")
-    try:
-        ibv_devices = which("ibv_devices")
-        ibv_devices(output=str, error=str)
-        deps["openmpi"].append("+verbs")
-    except:
-        pass
+    # if sys.platform == "darwin":
+    #     deps["llvm"].append("~gold")
+    # if (os.path.isfile("/usr/include/pmi.h") or
+    #     os.path.isfile("/usr/slurm/include/pmi.h") or
+    #     os.path.isfile("/usr/include/pmi2.h") or
+    #     os.path.isfile("/usr/slurm/include/pmi2.h")):
+    #     deps["openmpi"].append("+pmi")
+    # try:
+    #     ibv_devices = which("ibv_devices")
+    #     ibv_devices(output=str, error=str)
+    #     deps["openmpi"].append("+verbs")
+    # except:
+    #     pass
     # TODO: Mumps doesn't build everywhere; enable it once it works
-    deps["petsc"].append("~mumps")
+    # deps["petsc"].append("~mumps")
 
     # Set dependencies
     for pkg, opts in sorted(deps.iteritems()):
