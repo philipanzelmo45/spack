@@ -62,6 +62,7 @@ class Cactusext(Package):
     deps["openmpi"] = []
 
     # Initialize dependencies that are mentioned below
+    deps["bison"] = []
     deps["charm"] = ["-netlrts", "+mpi", "+smp"]
     if sys.platform != "darwin":
         deps["charm"].append("+papi")
@@ -72,6 +73,7 @@ class Cactusext(Package):
     deps["julia"] = ["@master", "+hdf5", "+mpi"]   # "+plots", "+python"
     # deps["libsigsegv"] = []
     deps["llvm"] = []
+    deps["pkg-config"] = []
     deps["python"] = []
     deps["simulationio"] = []
 
@@ -86,6 +88,9 @@ class Cactusext(Package):
 
     # Compilers
     cactusext_compiler = "gcc@6.2.0-spack"
+    bison_compiler = cactusext_compiler
+    if sys.platform == "darwin":
+        bison_compiler = "clang@8.0.0-apple"
     cmake_compiler = cactusext_compiler
     if sys.platform == "darwin":
         cmake_compiler = "clang@8.0.0-apple"
@@ -95,6 +100,9 @@ class Cactusext(Package):
     jemalloc_compiler = cactusext_compiler
     if sys.platform == "darwin":
         jemalloc_compiler = "clang@8.0.0-apple"
+    pkg_config_compiler = cactusext_compiler
+    if sys.platform == "darwin":
+        pkg_config_compiler = "clang@8.0.0-apple"
     python_compiler = cactusext_compiler
     if sys.platform == "darwin":
         python_compiler = "clang@8.0.0-apple"
@@ -126,11 +134,13 @@ class Cactusext(Package):
     # These are apparently not deduced -- why?
     # deps["libsigsegv"].append("%"+cactusext_compiler)
 
+    deps["bison"].append("%"+bison_compiler)
     deps["cmake"].append("%"+cmake_compiler)
     deps["git"].append("%"+git_compiler)
     git_deps = ["autoconf", "curl", "expat", "openssl", "zlib"]
     deps["git"].extend(["^"+dep+" %"+cactusext_compiler for dep in git_deps])
     deps["jemalloc"].append("%"+jemalloc_compiler)
+    deps["pkg-config"].append("%"+pkg_config_compiler)
     deps["python"].append("%"+python_compiler)
     python_deps = ["bzip2", "ncurses", "readline", "openssl", "sqlite", "zlib"]
     deps["python"].extend(
