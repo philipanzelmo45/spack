@@ -23,6 +23,7 @@
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
 import os
+import sys
 
 from spack import *
 
@@ -60,7 +61,7 @@ class Llvm(Package):
             description="Build the LLVM C++ standard library")
     variant('compiler-rt', default=True,
             description="Build LLVM compiler runtime, including sanitizers")
-    variant('gold', default=True,
+    variant('gold', default=sys.platform != "darwin",
             description="Add support for LTO with the gold linker plugin")
     variant('shared_libs', default=False,
             description="Build all components as shared libraries, faster, "
