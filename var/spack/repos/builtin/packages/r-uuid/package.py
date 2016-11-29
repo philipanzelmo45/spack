@@ -26,16 +26,15 @@
 from spack import *
 
 
-class RRzmq(Package):
-    """Interface to the ZeroMQ lightweight messaging kernel."""
+class RUuid(Package):
+    """Tools for generating and handling of UUIDs (Universally Unique
+    Identifiers)."""
 
-    homepage = "http://github.com/armstrtw/rzmq"
-    url      = "https://cran.r-project.org/src/contrib/rzmq_0.7.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/rzmq"
+    homepage = "http://www.rforge.net/uuid"
+    url      = "https://cran.rstudio.com/src/contrib/uuid_0.1-2.tar.gz"
+    list_url = "https://cran.rstudio.com/src/contrib/Archive/uuid"
 
-    version('0.7.7', '8ba18fd1c222d1eb25bb622ccd2897e0')
-
-    depends_on('zeromq')
+    version('0.1-2', 'f97d000c0b16bca455fb5bf2cd668ddf')
 
     extends('R')
 

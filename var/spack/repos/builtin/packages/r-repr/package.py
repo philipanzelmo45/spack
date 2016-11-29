@@ -26,16 +26,15 @@
 from spack import *
 
 
-class RRzmq(Package):
-    """Interface to the ZeroMQ lightweight messaging kernel."""
+class RRepr(Package):
+    """String and binary representations of objects for several formats and
+    mime types."""
 
-    homepage = "http://github.com/armstrtw/rzmq"
-    url      = "https://cran.r-project.org/src/contrib/rzmq_0.7.7.tar.gz"
-    list_url = "https://cran.r-project.org/src/contrib/Archive/rzmq"
+    homepage = "https://github.com/IRkernel/repr"
+    url      = "https://cran.r-project.org/src/contrib/repr_0.9.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/repr"
 
-    version('0.7.7', '8ba18fd1c222d1eb25bb622ccd2897e0')
-
-    depends_on('zeromq')
+    version('0.9', 'db5ff74893063b492f684e42283070bd')
 
     extends('R')
 

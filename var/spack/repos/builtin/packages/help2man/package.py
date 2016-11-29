@@ -25,33 +25,13 @@
 from spack import *
 
 
-class Autoconf(AutotoolsPackage):
-    """Autoconf -- system configuration part of autotools"""
+class Help2man(AutotoolsPackage):
+    """help2man produces simple manual pages from the '--help' and '--version'
+    output of other commands."""
 
-    homepage = 'https://www.gnu.org/software/autoconf/'
-    url = 'http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz'
+    homepage = "https://www.gnu.org/software/help2man/"
+    url      = "http://gnu.askapache.com/help2man/help2man-1.47.4.tar.xz"
 
-    version('2.69', '82d05e03b93e45f5a39b828dc9c6c29b')
-    version('2.62', '6c1f3b3734999035d77da5024aab4fbd')
-    version('2.59', 'd4d45eaa1769d45e59dcb131a4af17a0')
-    version('2.13', '9de56d4a161a723228220b0f425dc711')
+    version('1.47.4', '544aca496a7d89de3e5d99e56a2f03d3')
 
-    # Note: m4 is not a build-time dependency of autoconf! m4 is
-    # needed when autoconf runs, not when autoconf is built.
-    depends_on('m4@1.4.6:')
-
-    def _make_executable(self, name):
-        return Executable(join_path(self.prefix.bin, name))
-
-    def setup_dependent_package(self, module, dependent_spec):
-        # Autoconf is very likely to be a build dependency,
-        # so we add the tools it provides to the dependent module
-        executables = ['autoconf',
-                       'autoheader',
-                       'autom4te',
-                       'autoreconf',
-                       'autoscan',
-                       'autoupdate',
-                       'ifnames']
-        for name in executables:
-            setattr(module, name, self._make_executable(name))
+    depends_on('gettext', type='build')

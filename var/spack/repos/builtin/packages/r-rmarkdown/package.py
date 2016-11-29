@@ -22,36 +22,29 @@
 # License along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 ##############################################################################
+
 from spack import *
 
 
-class Autoconf(AutotoolsPackage):
-    """Autoconf -- system configuration part of autotools"""
+class RRmarkdown(Package):
+    """Convert R Markdown documents into a variety of formats."""
 
-    homepage = 'https://www.gnu.org/software/autoconf/'
-    url = 'http://ftp.gnu.org/gnu/autoconf/autoconf-2.69.tar.gz'
+    homepage = "http://rmarkdown.rstudio.com/"
+    url      = "https://cran.r-project.org/src/contrib/rmarkdown_1.0.tar.gz"
+    list_url = "https://cran.r-project.org/src/contrib/Archive/rmarkdown"
 
-    version('2.69', '82d05e03b93e45f5a39b828dc9c6c29b')
-    version('2.62', '6c1f3b3734999035d77da5024aab4fbd')
-    version('2.59', 'd4d45eaa1769d45e59dcb131a4af17a0')
-    version('2.13', '9de56d4a161a723228220b0f425dc711')
+    version('1.0', '264aa6a59e9680109e38df8270e14c58')
 
-    # Note: m4 is not a build-time dependency of autoconf! m4 is
-    # needed when autoconf runs, not when autoconf is built.
-    depends_on('m4@1.4.6:')
+    extends('R')
 
-    def _make_executable(self, name):
-        return Executable(join_path(self.prefix.bin, name))
+    depends_on('r-knitr', type=nolink)
+    depends_on('r-yaml', type=nolink)
+    depends_on('r-htmltools', type=nolink)
+    depends_on('r-catools', type=nolink)
+    depends_on('r-evaluate', type=nolink)
+    depends_on('r-base64enc', type=nolink)
+    depends_on('r-jsonlite', type=nolink)
 
-    def setup_dependent_package(self, module, dependent_spec):
-        # Autoconf is very likely to be a build dependency,
-        # so we add the tools it provides to the dependent module
-        executables = ['autoconf',
-                       'autoheader',
-                       'autom4te',
-                       'autoreconf',
-                       'autoscan',
-                       'autoupdate',
-                       'ifnames']
-        for name in executables:
-            setattr(module, name, self._make_executable(name))
+    def install(self, spec, prefix):
+        R('CMD', 'INSTALL', '--library={0}'.format(self.module.r_lib_dir),
+          self.stage.source_path)
