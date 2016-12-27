@@ -40,7 +40,8 @@ class Funhpc(Package):
         os.mkdir(join_path(prefix, 'bin'))
         os.mkdir(join_path(prefix, 'include'))
         os.mkdir(join_path(prefix, 'lib'))
-        for binfile in [# 'selftest', 'selftest-funhpc',
+        for binfile in [
+                'selftest', 'selftest-funhpc',
                 'benchmark', 'benchmark2', 'fibonacci', 'hello', 'pingpong']:
             shutil.copy(binfile, join_path(prefix, 'bin'))
         for subdir in ['adt', 'cxx', 'fun', 'funhpc', 'qthread']:
