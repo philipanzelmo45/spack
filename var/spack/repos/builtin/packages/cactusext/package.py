@@ -71,7 +71,7 @@ class Cactusext(Package):
     deps["cmake"] = []
     deps["funhpc"] = []
     deps["git"] = []
-    deps["gettext"] = ["~libxml2"]
+    # deps["gettext"] = ["~libxml2"]
     deps["jemalloc"] = []
     deps["julia"] = ["@master", "+hdf5", "+mpi"]   # "+plots", "+python"
     # deps["libsigsegv"] = []
