@@ -25,19 +25,18 @@
 from spack import *
 
 
-class Netcdf(Package):
+class Netcdf(AutotoolsPackage):
     """NetCDF is a set of software libraries and self-describing,
-       machine-independent data formats that support the creation, access,
-       and sharing of array-oriented scientific data.
-
-    """
+    machine-independent data formats that support the creation, access,
+    and sharing of array-oriented scientific data."""
 
     homepage = "http://www.unidata.ucar.edu/software/netcdf"
     url      = "ftp://ftp.unidata.ucar.edu/pub/netcdf/netcdf-4.3.3.tar.gz"
 
-    version('4.4.1', '7843e35b661c99e1d49e60791d5072d8')
-    version('4.4.0', 'cffda0cbd97fdb3a06e9274f7aef438e')
-    version('4.3.3', '5fbd0e108a54bd82cb5702a73f56d2ae')
+    version('4.4.1',   '7843e35b661c99e1d49e60791d5072d8')
+    version('4.4.0',   'cffda0cbd97fdb3a06e9274f7aef438e')
+    version('4.3.3.1', '5c9dad3705a3408d27f696e5b31fb88c')
+    version('4.3.3',   '5fbd0e108a54bd82cb5702a73f56d2ae')
 
     variant('mpi',     default=True,  description='Enables MPI parallelism')
     variant('hdf4',    default=False, description='Enable HDF4 support')
@@ -81,7 +80,8 @@ class Netcdf(Package):
         ff.filter(r'^(#define\s+NC_MAX_VARS\s+)\d+(.*)$',
                   r'\1{0}\2'.format(max_vars))
 
-    def install(self, spec, prefix):
+    def configure_args(self):
+        spec = self.spec
         # Workaround until variant forwarding works properly
         if '+mpi' in spec and spec.satisfies('^hdf5~mpi'):
             raise RuntimeError('Invalid spec. Package netcdf requires '
@@ -94,7 +94,6 @@ class Netcdf(Package):
         LIBS     = []
 
         config_args = [
-            "--prefix=%s" % prefix,
             "--enable-fsync",
             "--enable-v2",
             "--enable-utilities",
@@ -167,10 +166,8 @@ class Netcdf(Package):
         config_args.append('LDFLAGS=%s'  % ' '.join(LDFLAGS))
         config_args.append('LIBS=%s'     % ' '.join(LIBS))
 
-        configure(*config_args)
-        make()
+        return config_args
 
-        if self.run_tests:
-            make("check")
-
-        make("install")
+    def check(self):
+        # h5_test fails when run in parallel
+        make('check', parallel=False)
