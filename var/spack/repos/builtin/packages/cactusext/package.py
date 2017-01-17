@@ -91,7 +91,7 @@ class Cactusext(Package):
     deps["python"].append("@2.7.12")
 
     # Compilers
-    cactusext_compiler = "gcc@6.2.0-spack"
+    cactusext_compiler = "gcc@6.3.0-spack"
     bison_compiler = cactusext_compiler
     if sys.platform == "darwin":
         bison_compiler = "clang@8.0.0-apple"
