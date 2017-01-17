@@ -22,6 +22,7 @@ class Cactusext(Package):
     variant("julia", default=False, description="Enable Julia")
     variant("llvm", default=False, description="Enable LLVM")
     # variant("scalasca", default=False, description="Enable Scalasca")
+    variant("rust", default=False, description="Enable Rust")
     variant("simulationio", default=False, description="Enable SimulationIO")
 
     deps = {}
@@ -53,6 +54,7 @@ class Cactusext(Package):
     whens["funhpc"] = ["+funhpc"]
     whens["julia"] = ["+julia"]
     whens["llvm"] = ["+llvm"]
+    whens["rust"] = ["+rust"]
     whens["simulationio"] = ["+simulationio"]
 
     # Configure dependencies for convenience
@@ -74,6 +76,7 @@ class Cactusext(Package):
     deps["julia"] = ["@master", "+hdf5", "+mpi"]   # "+plots", "+python"
     # deps["libsigsegv"] = []
     deps["llvm"] = []
+    deps["rust"] = []
     deps["pkg-config"] = []
     deps["python"] = []
     deps["simulationio"] = []
@@ -130,6 +133,7 @@ class Cactusext(Package):
     deps["funhpc"].append("%"+cactusext_compiler)
     deps["julia"].append("%"+cactusext_compiler)
     deps["llvm"].append("%"+cactusext_compiler)
+    deps["rust"].append("%"+cactusext_compiler)
     deps["simulationio"].append("%"+cactusext_compiler)
 
     # These are apparently not deduced -- why?
