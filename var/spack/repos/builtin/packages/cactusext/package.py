@@ -29,14 +29,14 @@ class Cactusext(Package):
     whens = {}
 
     # Actual dependencies
-    deps["blas"] = []
+    # deps["blas"] = []
     deps["boost"] = ["+mpi"]
     deps["fftw"] = ["+mpi", "+openmp"]
     deps["gsl"] = []
     deps["hdf5"] = ["+mpi"]
     deps["hdf5-blosc"] = []
     deps["hwloc"] = []
-    deps["lapack"] = []
+    # deps["lapack"] = []
     deps["lmod"] = []
     deps["lua"] = []
     deps["mpi"] = []
