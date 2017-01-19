@@ -25,7 +25,7 @@
 from spack import *
 
 
-class Hwloc(Package):
+class Hwloc(AutotoolsPackage):
     """The Portable Hardware Locality (hwloc) software package
        provides a portable abstraction (across OS, versions,
        architectures, ...) of the hierarchical topology of modern
