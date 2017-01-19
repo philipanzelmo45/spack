@@ -91,6 +91,8 @@ class Cactusext(Package):
     # deps["hdf5"].append("@1.10.0-patch1")
     # TODO: Remove this once Spack chooses the latest 2.7 version by default
     deps["python"].append("@2.7.13")
+    # TODO: Remove this once Spack chooses the latest correct version by default
+    deps["openssl"].append("@:1.0")
 
     # Compilers
     cactusext_compiler = "gcc@6.3.0-spack"
