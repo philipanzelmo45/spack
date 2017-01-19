@@ -71,24 +71,26 @@ class Cactusext(Package):
     deps["cmake"] = []
     deps["funhpc"] = []
     deps["git"] = []
-    # deps["gettext"] = ["~libxml2"]
+    deps["gettext"] = []
     deps["jemalloc"] = []
     deps["julia"] = ["+hdf5", "+mpi"]   # "+plots", "+python", "@master"
     # deps["libsigsegv"] = []
     deps["llvm"] = []
     deps["rust"] = []
+    deps["tar"] = []
     deps["pkg-config"] = []
     deps["python"] = []
     deps["simulationio"] = []
 
+    whens["gettext"] = ["+julia"]
     whens["git"] = ["+julia"]
     whens["jemalloc"] = ["+funhpc"]
 
-    # Versions
-    # TODO: Remove this once the latest HDF5 version is again the default
-    deps["hdf5"].append("@1.10.0-patch1")
+    # # Versions
+    # # TODO: Remove this once the latest HDF5 version is again the default
+    # deps["hdf5"].append("@1.10.0-patch1")
     # TODO: Remove this once Spack chooses the latest 2.7 version by default
-    deps["python"].append("@2.7.12")
+    deps["python"].append("@2.7.13")
 
     # Compilers
     cactusext_compiler = "gcc@6.3.0-spack"
@@ -98,18 +100,21 @@ class Cactusext(Package):
     cmake_compiler = cactusext_compiler
     if sys.platform == "darwin":
         cmake_compiler = "clang@8.0.0-apple"
+    gettext_compiler = cactusext_compiler
+    if sys.platform == "darwin":
+        gettext_compiler = "clang@8.0.0-apple"
     git_compiler = cactusext_compiler
-    if sys.platform == "darwin":
-        git_compiler = "clang@8.0.0-apple"
+    # if sys.platform == "darwin":
+    #     git_compiler = "clang@8.0.0-apple"
     jemalloc_compiler = cactusext_compiler
-    if sys.platform == "darwin":
-        jemalloc_compiler = "clang@8.0.0-apple"
+    # if sys.platform == "darwin":
+    #     jemalloc_compiler = "clang@8.0.0-apple"
     pkg_config_compiler = cactusext_compiler
     if sys.platform == "darwin":
         pkg_config_compiler = "clang@8.0.0-apple"
     python_compiler = cactusext_compiler
-    if sys.platform == "darwin":
-        python_compiler = "clang@8.0.0-apple"
+    # if sys.platform == "darwin":
+    #     python_compiler = "clang@8.0.0-apple"
 
     deps["fftw"].append("%"+cactusext_compiler)
     deps["gsl"].append("%"+cactusext_compiler)
@@ -124,6 +129,7 @@ class Cactusext(Package):
     # deps["scalasca"].append("%"+cactusext_compiler)
     # deps["scorep"].append("%"+cactusext_compiler)
     # deps["tau"].append("%"+cactusext_compiler)
+    deps["tar"].append("%"+cactusext_compiler)
     deps["zlib"].append("%"+cactusext_compiler)
 
     deps["openblas"].append("%"+cactusext_compiler)
@@ -141,6 +147,7 @@ class Cactusext(Package):
 
     deps["bison"].append("%"+bison_compiler)
     deps["cmake"].append("%"+cmake_compiler)
+    deps["gettext"].append("%"+gettext_compiler)
     deps["git"].append("%"+git_compiler)
     git_deps = ["autoconf", "curl", "expat", "openssl", "zlib"]
     deps["git"].extend(["^"+dep+" %"+cactusext_compiler for dep in git_deps])
