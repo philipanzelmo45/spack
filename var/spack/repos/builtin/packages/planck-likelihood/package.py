@@ -36,6 +36,8 @@ class PlanckLikelihood(Package):
 
     version('2.00', '7a081679ff249dc4f94fb7177e16e818')
 
+    patch('make.patch')
+
     resource(
         name = 'baseline',
         url = "http://irsa.ipac.caltech.edu/data/Planck/release_2/software/COM_Likelihood_Data-baseline_R2.00.tar.gz",
