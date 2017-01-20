@@ -122,7 +122,10 @@ class Cosmomc(Package):
         prefix = self.prefix
         spec = self.spec
         cosmomc = Executable(join_path(prefix.bin, 'cosmomc'))
-        shutil.rmtree('spack-check')
+        try:
+            shutil.rmtree('spack-check')
+        except:
+            pass
         with working_dir('spack-check', create=True):
             for entry in [
                 'camb',
