@@ -119,7 +119,10 @@ class PlanckLikelihood(Package):
     def check_install(self):
         prefix = self.prefix
         clik_example_C = Executable(join_path(prefix.bin, 'clik_example_C'))
-        shutil.rmtree('spack-check')
+        try:
+            shutil.rmtree('spack-check')
+        except:
+            pass
         with working_dir('spack-check', create=True):
             clik_example_C(join_path(prefix, 'share', 'clik',
                                      'plc_2.0', 'hi_l', 'plik',
